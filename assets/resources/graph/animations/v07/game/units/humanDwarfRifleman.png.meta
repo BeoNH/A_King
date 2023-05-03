@@ -1,0 +1,38 @@
+{
+  "ver": "2.3.7",
+  "uuid": "f9541694-8daf-4c0e-923a-114e418abde0",
+  "importer": "texture",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "width": 512,
+  "height": 128,
+  "platformSettings": {},
+  "subMetas": {
+    "humanDwarfRifleman": {
+      "ver": "1.0.6",
+      "uuid": "425ebbed-c924-4118-8100-ca5631b0d1a3",
+      "importer": "sprite-frame",
+      "rawTextureUuid": "f9541694-8daf-4c0e-923a-114e418abde0",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 2,
+      "trimY": 2,
+      "width": 508,
+      "height": 124,
+      "rawWidth": 512,
+      "rawHeight": 128,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}
