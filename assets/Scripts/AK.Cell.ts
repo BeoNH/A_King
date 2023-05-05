@@ -1,5 +1,6 @@
 import AKing from "./!AKing";
 import Map from "./AK.Map";
+import Mod from "./AK.Mod";
 
 const {ccclass, property} = cc._decorator;
 
@@ -51,3 +52,4 @@ export default class Cell extends cc.Component {
       
     }
 }
+

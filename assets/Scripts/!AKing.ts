@@ -92,6 +92,7 @@ export default class AKing extends cc.Component {
             row.forEach((cell, colIndex) => {
                 let cellPos = cc.find(`Map/Cell ${rowIndex} ${colIndex}`, this.node).getComponent(cc.Sprite);
                 let a = Map.Ins.board;
+
                 if (cell === 1 || cell === 2) {
                     if(a[rowIndex+1][colIndex]==0 && a[rowIndex][colIndex+1]==0){
                         cellPos.spriteFrame = this.landScapesFrame[1];
@@ -123,12 +124,24 @@ export default class AKing extends cc.Component {
     onArcher(): void{
         let b = cc.instantiate(this.archer);
         let c = cc.find(`Map/Cell ${this.posCellX} ${this.posCellY}`, this.node);
-        b.parent = c;
+        b.name = `Town ${this.posCellX} ${this.posCellY}`;
+        b.parent = this.node;
+        b.position = cc.v3(c.position.x +35, c.position.y +35);
 
         this.changeLands(this.posCellX, this.posCellY, 1);
         this.checkLandscapes();
         Map.Ins.board[this.posCellX][this.posCellY] = 2;
   
         this.circleTown.position = this.startCircle;
+    }
+
+    onSell(): void{
+        let a = cc.find(`Town ${this.posCellX} ${this.posCellY}`, this.node);
+        a.destroy();
+        
+        this.changeLands(this.posCellX,this.posCellY,0);
+        this.checkLandscapes();
+        
+        this.circleSell.position = this.startCircle;
     }
 }
