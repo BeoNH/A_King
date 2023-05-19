@@ -13,7 +13,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "Archer",
+    "_name": "hbGoldMine",
     "_objFlags": 0,
     "_parent": null,
     "_children": [
@@ -56,15 +56,15 @@
       "ctor": "Float64Array",
       "array": [
         35,
-        35,
+        30,
         0,
         0,
         0,
         0,
         1,
-        0.6,
-        0.6,
-        1
+        0.5,
+        0.5,
+        0.819
       ]
     },
     "_eulerAngles": {
@@ -82,13 +82,13 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "draw",
+    "_name": "lbGold",
     "_objFlags": 0,
     "_parent": {
       "__id__": 1
     },
     "_children": [],
-    "_active": true,
+    "_active": false,
     "_components": [
       {
         "__id__": 3
@@ -100,15 +100,15 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 253,
+      "g": 223,
+      "b": 60,
       "a": 255
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 0,
-      "height": 0
+      "width": 41.67,
+      "height": 80
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -145,7 +145,7 @@
     "_id": ""
   },
   {
-    "__type__": "cc.Graphics",
+    "__type__": "cc.Label",
     "_name": "",
     "_objFlags": 0,
     "node": {
@@ -154,27 +154,29 @@
     "_enabled": true,
     "_materials": [
       {
-        "__uuid__": "a153945d-2511-4c14-be7b-05d242f47d57"
+        "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
       }
     ],
-    "_lineWidth": 2,
-    "_strokeColor": {
-      "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+    "_srcBlendFactor": 770,
+    "_dstBlendFactor": 771,
+    "_string": "15",
+    "_N$string": "15",
+    "_fontSize": 50,
+    "_lineHeight": 80,
+    "_enableWrapText": true,
+    "_N$file": {
+      "__uuid__": "6b69e630-e70e-4147-9550-e293b09bccb0"
     },
-    "_lineJoin": 1,
-    "_lineCap": 1,
-    "_fillColor": {
-      "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
-    },
-    "_miterLimit": 10,
+    "_isSystemFontUsed": false,
+    "_spacingX": 0,
+    "_batchAsBitmap": false,
+    "_styleFlags": 0,
+    "_underlineHeight": 0,
+    "_N$horizontalAlign": 0,
+    "_N$verticalAlign": 0,
+    "_N$fontFamily": "Arial",
+    "_N$overflow": 0,
+    "_N$cacheMode": 0,
     "_id": ""
   },
   {
@@ -185,7 +187,7 @@
     "asset": {
       "__id__": 0
     },
-    "fileId": "67E6u7vcxAS6NpExFeTnjx",
+    "fileId": "87wKNCnIlPgI+o6YOVQdOa",
     "sync": false
   },
   {
@@ -203,7 +205,7 @@
     ],
     "paused": false,
     "defaultSkin": "Blue",
-    "defaultAnimation": "idle",
+    "defaultAnimation": "goldpop",
     "_preCacheMode": 0,
     "_cacheMode": 0,
     "loop": true,
@@ -214,13 +216,13 @@
     "_frameCache": null,
     "_curFrame": null,
     "_skeletonCache": null,
-    "_animationName": "idle",
+    "_animationName": "goldpop",
     "_animationQueue": [],
     "_headAniInfo": null,
     "_playTimes": 0,
     "_isAniComplete": true,
     "_N$skeletonData": {
-      "__uuid__": "c1fd1292-86c4-4d4d-8964-2e9ae02c4122"
+      "__uuid__": "fb19c72c-1f1e-4abe-ac46-5edb52d8d2e3"
     },
     "_N$_defaultCacheMode": 0,
     "_N$debugSlots": false,
@@ -238,15 +240,11 @@
       "__id__": 1
     },
     "_enabled": true,
-    "attack": true,
+    "attack": false,
     "defense": false,
-    "support": false,
-    "Spawner": {
-      "__uuid__": "40906e02-a25b-4ec6-bf1f-cc370bb07d7e"
-    },
-    "drawwww": {
-      "__id__": 2
-    },
+    "support": true,
+    "Spawner": null,
+    "drawwww": null,
     "_id": ""
   },
   {

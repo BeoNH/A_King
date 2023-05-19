@@ -6814,16 +6814,16 @@ declare namespace cc {
 	}	
 	/** !#en The Label Component.
 	!#zh 文字标签组件 */
-	export class Prefab extends RenderComponent {		
+	export class Label extends RenderComponent {		
 		/** !#en Content string of label.
 		!#zh 标签显示的文本内容。 */
 		string: string;		
 		/** !#en Horizontal Alignment of label.
 		!#zh 文本内容的水平对齐方式。 */
-		horizontalAlign: Prefab.HorizontalAlign;		
+		horizontalAlign: Label.HorizontalAlign;		
 		/** !#en Vertical Alignment of label.
 		!#zh 文本内容的垂直对齐方式。 */
-		verticalAlign: Prefab.VerticalAlign;		
+		verticalAlign: Label.VerticalAlign;		
 		/** !#en The actual rendering font size in shrink mode
 		!#zh SHRINK 模式下面文本实际渲染的字体大小 */
 		actualFontSize: number;		
@@ -6838,7 +6838,7 @@ declare namespace cc {
 		lineHeight: number;		
 		/** !#en Overflow of label.
 		!#zh 文字显示超出范围时的处理方式。 */
-		overflow: Prefab.Overflow;		
+		overflow: Label.Overflow;		
 		/** !#en Whether auto wrap label when string width is large than label width.
 		!#zh 是否自动换行。 */
 		enableWrapText: boolean;		
@@ -6853,7 +6853,7 @@ declare namespace cc {
 		spacingX: number;		
 		/** !#en The cache mode of label. This mode only supports system fonts.
 		!#zh 文本缓存模式, 该模式只支持系统字体。 */
-		cacheMode: Prefab.CacheMode;		
+		cacheMode: Label.CacheMode;		
 		/** !#en Whether enable bold.
 		!#zh 是否启用黑体。 */
 		enableBold: boolean;		
@@ -7230,7 +7230,7 @@ declare namespace cc {
 		useSystemFont: boolean;		
 		/** !#en The cache mode of label. This mode only supports system fonts.
 		!#zh 文本缓存模式, 该模式只支持系统字体。 */
-		cacheMode: Prefab.CacheMode;		
+		cacheMode: Label.CacheMode;		
 		/** !#en The maximize width of the RichText
 		!#zh 富文本的最大宽度 */
 		maxWidth: number;		
@@ -15492,10 +15492,10 @@ declare namespace cc {
 		string: string;		
 		/** !#en The Label component attached to the node for EditBox's input text label
 		!#zh 输入框输入文本节点上挂载的 Label 组件对象 */
-		textLabel: Prefab;		
+		textLabel: Label;		
 		/** !#en The Label component attached to the node for EditBox's placeholder text label
 		!#zh 输入框占位符节点上挂载的 Label 组件对象 */
-		placeholderLabel: Prefab;		
+		placeholderLabel: Label;		
 		/** !#en The Sprite component attached to the node for EditBox's background
 		!#zh 输入框背景节点上挂载的 Sprite 组件对象 */
 		background: Sprite;		
@@ -17752,7 +17752,7 @@ declare namespace cc {
 	* Label
 	*****************************************************/
 	
-	export namespace Prefab {		
+	export namespace Label {		
 		/** !#en Enum for text alignment.
 		!#zh 文本横向对齐类型 */
 		export enum HorizontalAlign {			
@@ -17766,7 +17766,7 @@ declare namespace cc {
 	* Label
 	*****************************************************/
 	
-	export namespace Prefab {		
+	export namespace Label {		
 		/** !#en Enum for vertical text alignment.
 		!#zh 文本垂直对齐类型 */
 		export enum VerticalAlign {			
@@ -17780,7 +17780,7 @@ declare namespace cc {
 	* Label
 	*****************************************************/
 	
-	export namespace Prefab {		
+	export namespace Label {		
 		/** !#en Enum for Overflow.
 		!#zh Overflow 类型 */
 		export enum Overflow {			
@@ -17795,7 +17795,7 @@ declare namespace cc {
 	* Label
 	*****************************************************/
 	
-	export namespace Prefab {		
+	export namespace Label {		
 		/** !#en Enum for font type.
 		!#zh Type 类型 */
 		export enum Type {			
@@ -17809,7 +17809,7 @@ declare namespace cc {
 	* Label
 	*****************************************************/
 	
-	export namespace Prefab {		
+	export namespace Label {		
 		/** !#en Enum for cache mode.
 		!#zh CacheMode 类型 */
 		export enum CacheMode {			

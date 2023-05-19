@@ -1,3 +1,5 @@
+import AKing from "./!AKing";
+
 const {ccclass, property} = cc._decorator;
 
 @ccclass
@@ -20,6 +22,9 @@ export default class Map extends cc.Component {
         Map.Ins = this;
 
         this.Chessboard();
+
+        // this.node.on(cc.Node.EventType.TOUCH_END, this.onTouchStart, this);
+        // this.node.on(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
     }
 
     // update (dt) {}
@@ -33,8 +38,8 @@ export default class Map extends cc.Component {
                 a.name = `Cell ${x} ${y}`;
                 this.board[x][y] = 0;
                 a.position = new cc.Vec3(x*70 - this.node.width/2, y*70 - this.node.height/2);
+                a.setSiblingIndex(0);
             }
         }
     }
-
 }
