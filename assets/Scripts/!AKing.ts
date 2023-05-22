@@ -6,9 +6,7 @@ const {ccclass, property} = cc._decorator;
 @ccclass
 export default class AKing extends cc.Component {
     public static Ins: AKing;
-
-    @property(cc.SpriteFrame)
-    landScapesFrame: cc.SpriteFrame[] = [];
+   
     @property(cc.Node)
     circleTown:cc.Node = null;
     @property(cc.Node)
@@ -20,12 +18,21 @@ export default class AKing extends cc.Component {
     private HUMAN: string = "HUMAN";
     @property(cc.Node)
     castleHuman: cc.Node = null;
+    @property(cc.SpriteFrame)
+    landScapesFrame: cc.SpriteFrame[] = [];
     @property(cc.Prefab)
     humanBuild: cc.Prefab[] = [];
     @property(cc.Prefab)
     archer: cc.Prefab = null;
     @property(cc.Prefab)
     peasant: cc.Prefab = null;
+
+    @property({ readonly: true, editorOnly: true, serializable: false })
+    private ORC: string = "ORC";
+    @property(cc.Node)
+    castleORC: cc.Node = null;
+    @property(cc.SpriteFrame)
+    landScapesFrameOc: cc.SpriteFrame[] = [];
     
 
     public startCircle: cc.Vec3 = null;   
@@ -36,10 +43,13 @@ export default class AKing extends cc.Component {
     public townX: number;
     public townY: number;
 
-    public castleX: number;
-    public castleY: number;
+    public castleHMX: number;
+    public castleHMY: number;
 
     public graphics: cc.Graphics[] = [];
+
+
+    private collisionManager: cc.CollisionManager;
 
     // LIFE-CYCLE CALLBACKS:
 
@@ -48,6 +58,11 @@ export default class AKing extends cc.Component {
     }
 
     start () {
+
+        this.collisionManager = cc.director.getCollisionManager();
+        this.collisionManager.enabled = true;
+        this.collisionManager.enabledDebugDraw = true;
+
         this.startCircle = this.circleTown.position;
 
         this.randomBase();
@@ -55,59 +70,56 @@ export default class AKing extends cc.Component {
     }
 
     protected update(dt: number): void {
-        Map.Ins.board[this.castleX][this.castleY] = -1;
+        Map.Ins.board[this.castleHMX][this.castleHMY] = 3;
     }
 
     //thay doi cac o xung quanh TAM trong mang thanh gia tri z
     changeLands(x:number , y:number, z:number): void{
+        let nope = [2,-2,3,-3];
         Map.Ins.board[x][y] = z; //TAM
         if (x - 1 >= 0) { 
-            if(Map.Ins.board[x-1][y] !== 2){
+            if(!nope.includes(Map.Ins.board[x-1][y])){
                 Map.Ins.board[x-1][y] = z;
             }           
-            if (y - 1 >= 0 && Map.Ins.board[x-1][y-1] !== 2) {
+            if (y - 1 >= 0 && !nope.includes(Map.Ins.board[x-1][y-1])) {
                 Map.Ins.board[x-1][y-1] = z;
             }
         }
         if (y - 1 >= 0) {
-            if(Map.Ins.board[x][y-1] !==2){
+            if(!nope.includes(Map.Ins.board[x][y-1])){
                 Map.Ins.board[x][y-1] = z ;
             }
-            if (x + 1 < Map.Ins.board.length && Map.Ins.board[x+1][y-1] !==2) {
+            if (x + 1 < Map.Ins.board.length && !nope.includes(Map.Ins.board[x+1][y-1])) {
                 Map.Ins.board[x+1][y-1] = z;
             }
         }
         if (x + 1 < Map.Ins.board.length) {
-            if(Map.Ins.board[x+1][y] !==2){
+            if(!nope.includes(Map.Ins.board[x+1][y])){
                 Map.Ins.board[x+1][y] = z;
             }
-            if (y + 1 < Map.Ins.board[0].length && Map.Ins.board[x+1][y+1] !== 2) {
+            if (y + 1 < Map.Ins.board[0].length && !nope.includes(Map.Ins.board[x+1][y+1])) {
                 Map.Ins.board[x+1][y+1] = z;
             }
         }
         if (y + 1 < Map.Ins.board[0].length) {
-            if(Map.Ins.board[x][y+1] !== 2){
+            if(!nope.includes(Map.Ins.board[x][y+1])){
                 Map.Ins.board[x][y+1] = z;
             }
-            if (x - 1 >= 0 && Map.Ins.board[x-1][y+1] !== 2) {
+            if (x - 1 >= 0 && !nope.includes(Map.Ins.board[x-1][y+1])) {
                 Map.Ins.board[x-1][y+1] = z;
             }
         }
     }  
 
     randomBase(): void{
-        this.castleX = ~~(Math.random()*2 +2);
-        this.castleY = ~~(Math.random()*5 +2);
+        this.castleHMX = ~~(Math.random()*2 +2);
+        this.castleHMY = ~~(Math.random()*5 +2);
 
-        let c = cc.find(`Map/Cell ${this.castleX} ${this.castleY}`, this.node);
-        this.castleHuman.name = `Town ${this.castleX} ${this.castleY}`;
+        let c = cc.find(`Map/Cell ${this.castleHMX} ${this.castleHMY}`, this.node);
+        this.castleHuman.name = `Town ${this.castleHMX} ${this.castleHMY}`;
         this.castleHuman.position = cc.v3(c.position.x +35, c.position.y +35);
 
-        this.changeLands(this.castleX, this.castleY, 1);
-        
-  
-        let cellPos = cc.find(`Map/Cell ${this.castleX} ${this.castleY}`, this.node);
-        console.log(cellPos);
+        this.changeLands(this.castleHMX, this.castleHMY, 1);
     }
 
     checkLandscapes(): void{
@@ -116,7 +128,7 @@ export default class AKing extends cc.Component {
                 let cellPos = cc.find(`Map/Cell ${rowIndex} ${colIndex}`, this.node).getComponent(cc.Sprite);
                 let a = Map.Ins.board;
 
-                if (cell === 1 || cell === 2 || cell === -1) {
+                if (cell === 1 || cell === 2 || cell === 3) {
                     if(a[rowIndex+1][colIndex]==0 && a[rowIndex][colIndex+1]==0){
                         cellPos.spriteFrame = this.landScapesFrame[1];
                     }
@@ -136,7 +148,27 @@ export default class AKing extends cc.Component {
                         cellPos.spriteFrame = this.landScapesFrame[rand];
                     }
                 }
-                else{
+                if(cell === -1 || cell === -2 || cell === -3){
+                    if(a[rowIndex+1][colIndex]==0 && a[rowIndex][colIndex+1]==0){
+                        cellPos.spriteFrame = this.landScapesFrameOc[1];
+                    }
+                    else if(rowIndex-1>=0 && a[rowIndex-1][colIndex]==0 && a[rowIndex][colIndex+1]==0){
+                        cellPos.spriteFrame = this.landScapesFrameOc[3];
+                    }
+                    else if(rowIndex-1>=0 && colIndex-1>=0 && a[rowIndex-1][colIndex]==0 && a[rowIndex][colIndex-1]==0){
+                        cellPos.spriteFrame = this.landScapesFrameOc[2];
+                    }
+                    else if(colIndex-1>=0 && a[rowIndex+1][colIndex]==0 && a[rowIndex][colIndex-1]==0){
+                        cellPos.spriteFrame = this.landScapesFrameOc[4];
+                    }
+                    else
+                    {
+                        let arr = Math.random();
+                        let rand = arr <0.5 ? 0 : 5;
+                        cellPos.spriteFrame = this.landScapesFrameOc[rand];
+                    }
+                }
+                if(cell === 0){
                     cellPos.spriteFrame = null;
                 }
             });
@@ -186,8 +218,9 @@ export default class AKing extends cc.Component {
     onSell(): void{
         this.circleSell.position = this.startCircle;
 
-        let a = cc.find(`Town ${this.posCellX} ${this.posCellY}`, this.node);
-        a.destroy();
+        let node = cc.find(`Town ${this.posCellX} ${this.posCellY}`, this.node);
+        node.getComponent(Town).drawwww.destroy();
+        node?.destroy();
 
         //xử lý bán tháp
         let b = this.circleSell.children[1].children[0].getComponent(cc.Label);
@@ -201,35 +234,27 @@ export default class AKing extends cc.Component {
         }
         
         this.changeLands(this.posCellX,this.posCellY,0);
-
-        for (let i = 0; i < Map.Ins.row ; i++) {
-            for (let j = 0; j < Map.Ins.col; j++) {
-                if(Map.Ins.board[i][j] == 2){
-                    this.changeLands(i,j,1);
-                    Map.Ins.board[i][j] = 2;
-                }
-            } 
-        }
         this.checkLandscapes();
     }
 
     checkIsTown(): void{
         let aa = this.node.getChildByName(`Town ${this.townX} ${this.townY}`);        
-        if(aa == null) return;
+        if(!aa) return;
         let town = aa.getComponent(Town);
+        if(!town) return;
         if(town.arrayPosMove.length <= 0) return;
   
-        let a = town.arrayPosMove[0].name.split(" ");
         let b = town.arrayPosMove[town.arrayPosMove.length-1].name.split(" ");
+        let bb = this.node.getChildByName(`Town ${parseInt(b[1])} ${parseInt(b[2])}`);        
   
         if (
-          (Map.Ins.board[parseInt(b[1])][parseInt(b[2])] !== 2 && Map.Ins.board[parseInt(b[1])][parseInt(b[2])] !== -1) ||
-          (Map.Ins.board[parseInt(a[1])][parseInt(a[2])] !== 2) ||
-          !town.attack) 
+          (Map.Ins.board[parseInt(b[1])][parseInt(b[2])] !== -2 && Map.Ins.board[parseInt(b[1])][parseInt(b[2])] !== -3) ||
+          (Map.Ins.board[this.townX][this.townY] !== 2) ||
+          !town.attack || 
+          aa.getComponent(sp.Skeleton).defaultSkin === bb.getComponent(sp.Skeleton).defaultSkin)
         {
             town.arrayPosMove = [];
-        }
-
+        }        
         town.typeAction();
       }
 }

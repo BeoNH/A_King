@@ -8,19 +8,12 @@ const {ccclass, property} = cc._decorator;
 @ccclass
 export default class Cell extends cc.Component {
 
-    private collisionManager: cc.CollisionManager;
-
-
     start() {
 
       cc.Canvas.instance.node.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
       this.node.on(cc.Node.EventType.MOUSE_DOWN, this.onMousDown, this);
       this.node.on(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
       this.node.on(cc.Node.EventType.MOUSE_UP, this.onMousUp, this);
-
-      this.collisionManager = cc.director.getCollisionManager();
-      this.collisionManager.enabled = true;
-      this.collisionManager.enabledDebugDraw = true;
     }
 
     //Sử dụng chuột để chon đường đi (Tối ưu: chuyển sang dạng touch để có thể build điện thoại)
@@ -31,9 +24,11 @@ export default class Cell extends cc.Component {
       
       this.node.on(cc.Node.EventType.MOUSE_MOVE,this.onMouseMove,this);
     }
-       
+
     onTouchEnd(event): void{
       this.checkBoard();
+      console.log(this.node.name);
+      
     }
 
     onMousDown(event): void{

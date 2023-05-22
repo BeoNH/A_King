@@ -1,10 +1,14 @@
 import AKing from "./!AKing";
+import Map from "./AK.Map";
 
 const {ccclass, property} = cc._decorator;
 
 @ccclass
 export default class Town extends cc.Component {
     public static Ins: Town;
+
+    @property(cc.Integer)
+    maxHP: number = 0;
 
     @property(cc.Boolean)
     attack: boolean = false;
@@ -15,14 +19,16 @@ export default class Town extends cc.Component {
 
     @property(cc.Prefab)
     Spawner: cc.Prefab = null;
-
     @property(cc.Node)
     drawwww: cc.Node = null;
 
     public arrayPosMove: cc.Node[] = [];
+    public HP: number = 0;
     
     onLoad(): void{
         Town.Ins = this;
+
+        this.HP = this.maxHP;
 
         this.typeAction();
     }
@@ -33,6 +39,7 @@ export default class Town extends cc.Component {
         {
             this.node.destroyAllChildren();
         }
+        this.onDestroy();
     }
 
     typeAction(): void{
@@ -73,8 +80,7 @@ export default class Town extends cc.Component {
             if(this.arrayPosMove.length > 0){
                 let a =  cc.instantiate(this.Spawner);
                 a.parent = this.node;
-                let worldPos = this.node.convertToWorldSpaceAR(cc.Vec3.ZERO);
-                a.position = worldPos;
+                // a.position = cc.v3(35,35);
             }
         },5)
     }
@@ -91,4 +97,13 @@ export default class Town extends cc.Component {
     }
 
     onDefense(): void{}
+
+    onDestroy(): void{
+        if(this.HP <=0){
+            let a = this.node.name.split(" ");
+            AKing.Ins.changeLands(parseInt(a[1]),parseInt(a[2]),0);
+            AKing.Ins.checkLandscapes();
+            this.node.destroy();
+        }      
+    }
 }
