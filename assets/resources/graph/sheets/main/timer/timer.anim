@@ -1,0 +1,103 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "timer",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 5.153846153846154,
+  "sample": 26,
+  "speed": 1,
+  "wrapMode": 1,
+  "curveData": {
+    "comps": {
+      "cc.Sprite": {
+        "spriteFrame": [
+          {
+            "frame": 0.23076923076923078,
+            "value": {
+              "__uuid__": "1e44a3ed-d219-405d-b559-7f0bbe87ee99"
+            }
+          },
+          {
+            "frame": 0.6153846153846154,
+            "value": {
+              "__uuid__": "3d539ce1-ff68-4398-b9f6-624246b090cf"
+            }
+          },
+          {
+            "frame": 1,
+            "value": {
+              "__uuid__": "85be4fb6-dcf1-432b-ba79-ef564dcc3391"
+            }
+          },
+          {
+            "frame": 1.3846153846153846,
+            "value": {
+              "__uuid__": "5ffb4ca8-714c-4c0e-90c2-cf39942f2ee2"
+            }
+          },
+          {
+            "frame": 1.7692307692307692,
+            "value": {
+              "__uuid__": "578a888b-e477-4560-abb1-fe50a58a75e2"
+            }
+          },
+          {
+            "frame": 2.1538461538461537,
+            "value": {
+              "__uuid__": "9ce2496b-587c-4a59-90d3-351420ce59d3"
+            }
+          },
+          {
+            "frame": 2.5384615384615383,
+            "value": {
+              "__uuid__": "79e0b4f7-ada2-42bc-a17d-8e7f98a48ded"
+            }
+          },
+          {
+            "frame": 2.923076923076923,
+            "value": {
+              "__uuid__": "f388bfeb-a0f2-40ff-9450-bcfad515d189"
+            }
+          },
+          {
+            "frame": 3.3076923076923075,
+            "value": {
+              "__uuid__": "36a4b9c9-e19e-4a63-96f5-bc1e801e8a02"
+            }
+          },
+          {
+            "frame": 3.6923076923076925,
+            "value": {
+              "__uuid__": "eda82a54-32d1-400b-ba2b-ac9b1620910e"
+            }
+          },
+          {
+            "frame": 4.076923076923077,
+            "value": {
+              "__uuid__": "d45063ad-499d-4f8d-9f51-12119d4557c1"
+            }
+          },
+          {
+            "frame": 4.461538461538462,
+            "value": {
+              "__uuid__": "5626f64b-703d-408c-93aa-6ddb79a47ad6"
+            }
+          },
+          {
+            "frame": 4.846153846153846,
+            "value": {
+              "__uuid__": "cfd113d1-4bf4-49ca-bff1-5bcc65ac9653"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "events": [
+    {
+      "frame": 5.153846153846154,
+      "func": "",
+      "params": []
+    }
+  ]
+}

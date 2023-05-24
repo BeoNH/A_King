@@ -208,7 +208,7 @@
         "__id__": 6
       }
     ],
-    "_active": true,
+    "_active": false,
     "_components": [
       {
         "__id__": 9
@@ -488,8 +488,8 @@
     },
     "_size": {
       "__type__": "cc.Size",
-      "width": 130,
-      "height": 130
+      "width": 140,
+      "height": 140
     },
     "_id": ""
   },

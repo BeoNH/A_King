@@ -1,3 +1,4 @@
+import AI from "./AK.Automation";
 import Map from "./AK.Map";
 import Town from "./AK.Town";
 
@@ -13,26 +14,28 @@ export default class AKing extends cc.Component {
     circleSell:cc.Node = null;
     @property(cc.Node)
     map: cc.Node = null;
+    @property(cc.Prefab)
+    timer: cc.Prefab = null;
+    @property(cc.Node)
+    hoverHM: cc.Node = null;
 
     @property({ readonly: true, editorOnly: true, serializable: false })
-    private HUMAN: string = "HUMAN";
+    private HUMAN: string = "---------------- HUMAN -------------------";
     @property(cc.Node)
     castleHuman: cc.Node = null;
     @property(cc.SpriteFrame)
     landScapesFrame: cc.SpriteFrame[] = [];
     @property(cc.Prefab)
     humanBuild: cc.Prefab[] = [];
-    @property(cc.Prefab)
-    archer: cc.Prefab = null;
-    @property(cc.Prefab)
-    peasant: cc.Prefab = null;
 
     @property({ readonly: true, editorOnly: true, serializable: false })
-    private ORC: string = "ORC";
+    private ORC: string = "---------------- ORC -------------------";
     @property(cc.Node)
     castleORC: cc.Node = null;
     @property(cc.SpriteFrame)
     landScapesFrameOc: cc.SpriteFrame[] = [];
+    @property(cc.Prefab)
+    orcBuild: cc.Prefab[] = [];
     
 
     public startCircle: cc.Vec3 = null;   
@@ -46,8 +49,7 @@ export default class AKing extends cc.Component {
     public castleHMX: number;
     public castleHMY: number;
 
-    public graphics: cc.Graphics[] = [];
-
+    public isBuilding: boolean = false;
 
     private collisionManager: cc.CollisionManager;
 
@@ -149,16 +151,16 @@ export default class AKing extends cc.Component {
                     }
                 }
                 if(cell === -1 || cell === -2 || cell === -3){
-                    if(a[rowIndex+1][colIndex]==0 && a[rowIndex][colIndex+1]==0){
+                    if(rowIndex+1<a.length && colIndex+1<row.length && a[rowIndex+1][colIndex]==0 && a[rowIndex][colIndex+1]==0){
                         cellPos.spriteFrame = this.landScapesFrameOc[1];
                     }
-                    else if(rowIndex-1>=0 && a[rowIndex-1][colIndex]==0 && a[rowIndex][colIndex+1]==0){
+                    else if(colIndex+1<row.length && a[rowIndex-1][colIndex]==0 && a[rowIndex][colIndex+1]==0){
                         cellPos.spriteFrame = this.landScapesFrameOc[3];
                     }
-                    else if(rowIndex-1>=0 && colIndex-1>=0 && a[rowIndex-1][colIndex]==0 && a[rowIndex][colIndex-1]==0){
+                    else if(a[rowIndex-1][colIndex]==0 && a[rowIndex][colIndex-1]==0){
                         cellPos.spriteFrame = this.landScapesFrameOc[2];
                     }
-                    else if(colIndex-1>=0 && a[rowIndex+1][colIndex]==0 && a[rowIndex][colIndex-1]==0){
+                    else if(rowIndex+1<a.length && a[rowIndex+1][colIndex]==0 && a[rowIndex][colIndex-1]==0){
                         cellPos.spriteFrame = this.landScapesFrameOc[4];
                     }
                     else
@@ -209,7 +211,10 @@ export default class AKing extends cc.Component {
         d.name = `Town ${this.posCellX} ${this.posCellY}`;
         d.parent = this.node;
         d.position = cc.v3(e.position.x +35, e.position.y +35);
-        d.setSiblingIndex(50);
+        d.setSiblingIndex(4);
+        this.hoverEffect(true,`building`,d.position);
+        this.isBuilding = true;
+        this.DemNguocTimerIn(d);
         this.changeLands(this.posCellX, this.posCellY, 1);
         this.checkLandscapes();
         Map.Ins.board[this.posCellX][this.posCellY] = 2;
@@ -217,10 +222,13 @@ export default class AKing extends cc.Component {
 
     onSell(): void{
         this.circleSell.position = this.startCircle;
+        if(this.isBuilding) return;
 
         let node = cc.find(`Town ${this.posCellX} ${this.posCellY}`, this.node);
-        node.getComponent(Town).drawwww.destroy();
+        node.getComponent(Town).drawwww?.destroy();
         node?.destroy();
+        this.hoverEffect(true,`destroy`,node.position);
+
 
         //xử lý bán tháp
         let b = this.circleSell.children[1].children[0].getComponent(cc.Label);
@@ -243,18 +251,58 @@ export default class AKing extends cc.Component {
         let town = aa.getComponent(Town);
         if(!town) return;
         if(town.arrayPosMove.length <= 0) return;
-  
+        
         let b = town.arrayPosMove[town.arrayPosMove.length-1].name.split(" ");
         let bb = this.node.getChildByName(`Town ${parseInt(b[1])} ${parseInt(b[2])}`);        
-  
+        
+        //Điều kiện xử lsy tháp khi nhấc chuột
         if (
           (Map.Ins.board[parseInt(b[1])][parseInt(b[2])] !== -2 && Map.Ins.board[parseInt(b[1])][parseInt(b[2])] !== -3) ||
           (Map.Ins.board[this.townX][this.townY] !== 2) ||
-          !town.attack || 
+          !town.attack || this.isBuilding ||
           aa.getComponent(sp.Skeleton).defaultSkin === bb.getComponent(sp.Skeleton).defaultSkin)
         {
             town.arrayPosMove = [];
         }        
         town.typeAction();
-      }
+    }
+
+    hoverEffect( status: boolean, ani?: string, pos?: cc.Vec3): void{
+        this.hoverHM.active = status;
+        this.hoverHM.setSiblingIndex(100);
+        if(status){
+            this.hoverHM.getComponent(sp.Skeleton).animation = `${ani}`;
+            this.hoverHM.position = pos;
+        }
+        else{
+            this.hoverHM.position = this.startCircle;
+        }
+
+        if(ani === `destroy`){
+            this.hoverHM.getComponent(sp.Skeleton).loop = false;
+            this.scheduleOnce(()=>{
+                this.hoverEffect(false);
+                this.hoverHM.getComponent(sp.Skeleton).loop = true;
+            },1);
+        }
+    }
+
+    DemNguocTimerIn(target: cc.Node): void{
+        let time = cc.instantiate(this.timer);
+        time.parent = this.node;
+        time.position = target.position;
+        time.scale = 0;
+
+        cc.tween(time).to(.5, {scale: 1, position: cc.v3(time.position.x,target.position.y+75)}).start();
+        
+        let ani = time.getComponent(cc.Animation);
+        time.getComponent(cc.Animation).getAnimationState(`timer`).duration = 8;
+        ani.on(`finished`, ()=>{
+            time.destroy();
+            this.hoverEffect(false);
+            this.isBuilding = false;
+        });
+        ani.play();
+        
+    }
 }

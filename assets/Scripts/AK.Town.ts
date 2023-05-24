@@ -29,8 +29,7 @@ export default class Town extends cc.Component {
         Town.Ins = this;
 
         this.HP = this.maxHP;
-
-        this.typeAction();
+        this.typeAction()
     }
 
     update(dt): void{
@@ -76,20 +75,25 @@ export default class Town extends cc.Component {
 
     onModSpawn(): void{
         this.unscheduleAllCallbacks();
-        this.schedule(()=>{
-            if(this.arrayPosMove.length > 0){
-                let a =  cc.instantiate(this.Spawner);
-                a.parent = this.node;
-                // a.position = cc.v3(35,35);
-            }
-        },5)
+        if(this.arrayPosMove.length > 0){
+            let a =  cc.instantiate(this.Spawner);
+            a.parent = this.node;
+            this.scheduleOnce(()=>{
+                this.onModSpawn();
+            },15)
+        }
     }
 
     onMakeGold(): void{
         this.unscheduleAllCallbacks();
         this.schedule(()=>{
-            let gold = AKing.Ins.castleHuman.children[2].getComponent(cc.Label);
-            gold.string = `${parseInt(gold.string)+15}`;
+            if(this.node.getComponent(sp.Skeleton).defaultSkin == `Red`){
+                let gold = AKing.Ins.castleORC.children[2].getComponent(cc.Label);
+                gold.string = `${parseInt(gold.string)+15}`;
+            }else{
+                let gold = AKing.Ins.castleHuman.children[2].getComponent(cc.Label);
+                gold.string = `${parseInt(gold.string)+15}`;
+            }
             this.node.children[0].active = true;
             this.node.children[0].position = cc.v3(0,0);
             cc.tween(this.node.children[0]) .to(1,{position: cc.v3(0,100)}) .call(()=>{ this.node.children[0].active = false}) .start();
@@ -103,7 +107,8 @@ export default class Town extends cc.Component {
             let a = this.node.name.split(" ");
             AKing.Ins.changeLands(parseInt(a[1]),parseInt(a[2]),0);
             AKing.Ins.checkLandscapes();
+            AKing.Ins.hoverEffect(true,`destroy`,this.node.position);
             this.node.destroy();
-        }      
+        } 
     }
 }

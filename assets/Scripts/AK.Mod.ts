@@ -31,7 +31,6 @@ export default class Mod extends cc.Component {
 	public move(): void{
 		let town = this.node.parent.getComponent(Town);
 		if(town.arrayPosMove.length <= 1) return;
-	  	this.node.getComponent(sp.Skeleton).animation = `run`;
 
 		//chuyển toạ độ điểm về toạ độ tháp.
 		let pos = town.arrayPosMove[this.count];
@@ -70,18 +69,25 @@ export default class Mod extends cc.Component {
 				this.node.pauseAllActions();
 				this.node.getComponent(sp.Skeleton).animation = `attack1`;
 				this.node.getComponent(sp.Skeleton).timeScale = 0.5;
-				this.onAtack(other.node);
+				//callback lại mỗi khi animation chạy xong.
+				this.node.getComponent(sp.Skeleton).setCompleteListener((entry: sp.spine.TrackEntry)=>{
+					if(entry.animation.name == "attack1" ) {
+						this.onAtack(other.node);
+					}
+				})
 		}
 	}
 
 	onCollisionExit(other: cc.Collider, self): void{
+		if(other.tag !== 1) return;
 		this.isAttack = false;
 		this.node.getComponent(sp.Skeleton).timeScale = 1;
+		this.node.getComponent(sp.Skeleton).animation = `run`;
 		this.node.resumeAllActions();
 	}
 
 	onAtack(taget: cc.Node): void{
-		if(taget.name == ``) return;
+		if(taget == null) return;
 		taget.getChildByName("hpBar").active = true;
 		let hp = taget.getChildByName("hpBar").getChildByName("hp");
 		if(taget.getComponent(Town)){
@@ -89,7 +95,6 @@ export default class Mod extends cc.Component {
 			taget.getComponent(Town).HP -= this.dame;
 			let hpTown = taget.getComponent(Town).HP;
 			hp.getComponent(cc.Sprite).fillRange = hpTown/max;
-			this.scheduleOnce(()=>{this.onAtack(taget)},0.5);
 		}
 		else if(taget.getComponent(Mod)){
 			let max = taget.getComponent(Mod).maxHP;
