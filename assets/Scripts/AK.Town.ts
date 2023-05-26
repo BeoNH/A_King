@@ -24,6 +24,8 @@ export default class Town extends cc.Component {
 
     public arrayPosMove: cc.Node[] = [];
     public HP: number = 0;
+
+    private isAttackTown: boolean = false;
     
     onLoad(): void{
         Town.Ins = this;
@@ -36,9 +38,11 @@ export default class Town extends cc.Component {
         this.Draw(this.arrayPosMove);
         if(this.arrayPosMove.length <= 0 && this.attack)
         {
-            this.node.destroyAllChildren();
+            for (let i = 1; i < this.node.childrenCount; i++) {
+                this.node.children[i].destroy();
+            }
         }
-        this.onDestroy();
+        this.onDestroy();        
     }
 
     typeAction(): void{
@@ -46,9 +50,9 @@ export default class Town extends cc.Component {
             case this.attack:
                 this.onModSpawn();
                 break;
-            case this.defense:
-                this.onDefense();
-                break;
+            // case this.defense:
+            //     this.onDefense();
+            //     break;
             case this.support:
                 this.onMakeGold();
                 break;
@@ -101,6 +105,43 @@ export default class Town extends cc.Component {
     }
 
     onDefense(): void{}
+
+    onCollisionEnter(other: cc.Collider, self: cc.CircleCollider): void{
+        if(!this.isAttackTown && this.defense && other.tag == 1 &&
+        other.node.getComponent(sp.Skeleton).defaultSkin !== self.node.getComponent(sp.Skeleton).defaultSkin)
+        {
+            this.isAttackTown =  true;
+            this.onShot(other.node);
+        }
+    }
+    onCollisionExit(other: cc.Collider, self: cc.CircleCollider): void{
+        if(other.node.getComponent(cc.Collider).tag !== 1) return;
+        this.isAttackTown = false;
+    }
+
+    onShot(taget: cc.Node): void{
+        let bullet = cc.instantiate(this.Spawner);
+        bullet.getComponent(sp.Skeleton).defaultSkin = this.node.getComponent(sp.Skeleton).defaultSkin;
+        bullet.parent = this.node;
+        bullet.position = cc.v3(0,100);
+
+        let pos = this.node.convertToNodeSpaceAR(taget.convertToWorldSpaceAR(cc.Vec3.ZERO));
+        let dir = taget.position.clone().sub(bullet.position);
+        let angleShot = Math.atan2(dir.x, dir.y) * 180 / Math.PI;
+
+        cc.tween(bullet)
+        .to(0, { angle: angleShot })
+        .to(0.2, { position: pos})
+        .call(()=>{
+            bullet.getComponent(sp.Skeleton).animation = `hit`;
+            bullet.getComponent(sp.Skeleton).setCompleteListener((enetry: sp.spine.TrackEntry) => {
+                if(enetry.animation.name === `hit`){
+                    bullet.destroy();
+                }
+            })
+        })        
+        .start();
+    }
 
     onDestroy(): void{
         if(this.HP <=0){

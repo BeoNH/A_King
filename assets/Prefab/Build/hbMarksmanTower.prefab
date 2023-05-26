@@ -13,7 +13,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "humanArcher",
+    "_name": "hbMarksmanTower",
     "_objFlags": 0,
     "_parent": null,
     "_children": [
@@ -31,10 +31,16 @@
       },
       {
         "__id__": 10
+      },
+      {
+        "__id__": 11
+      },
+      {
+        "__id__": 12
       }
     ],
     "_prefab": {
-      "__id__": 11
+      "__id__": 13
     },
     "_opacity": 255,
     "_color": {
@@ -51,21 +57,21 @@
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
-      "x": 0,
-      "y": 0
+      "x": 0.5,
+      "y": 0.5
     },
     "_trs": {
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        0,
-        0,
+        35,
+        35,
         0,
         0,
         0,
         0,
         1,
-        -0.5,
+        0.5,
         0.5,
         1
       ]
@@ -114,8 +120,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 100,
-      "height": 23
+      "width": 80,
+      "height": 18
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -127,7 +133,7 @@
       "ctor": "Float64Array",
       "array": [
         0,
-        132.43,
+        88.002,
         0,
         0,
         0,
@@ -178,8 +184,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 87,
-      "height": 16
+      "width": 69,
+      "height": 12
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -191,7 +197,7 @@
       "ctor": "Float64Array",
       "array": [
         0,
-        0.628,
+        0.549,
         0,
         0,
         0,
@@ -255,7 +261,7 @@
     "asset": {
       "__id__": 0
     },
-    "fileId": "46RaenmkRMvp1IXvLh0awM",
+    "fileId": "754BzdjXFHZJh9CY7wABBB",
     "sync": false
   },
   {
@@ -298,8 +304,18 @@
     "asset": {
       "__id__": 0
     },
-    "fileId": "39kfzm1CVH5Y1VOojQaCno",
+    "fileId": "a3cpEM95hDApfPfC+rqqI+",
     "sync": false
+  },
+  {
+    "__type__": "41b6eOaPjdLIoHxYQmKlfmc",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "_id": ""
   },
   {
     "__type__": "sp.Skeleton",
@@ -316,7 +332,7 @@
     ],
     "paused": false,
     "defaultSkin": "Blue",
-    "defaultAnimation": "run",
+    "defaultAnimation": "idle",
     "_preCacheMode": 0,
     "_cacheMode": 0,
     "loop": true,
@@ -327,13 +343,13 @@
     "_frameCache": null,
     "_curFrame": null,
     "_skeletonCache": null,
-    "_animationName": "run",
+    "_animationName": "idle",
     "_animationQueue": [],
     "_headAniInfo": null,
     "_playTimes": 0,
     "_isAniComplete": true,
     "_N$skeletonData": {
-      "__uuid__": "3fabcab7-efc4-470e-a56c-d40bcf487f89"
+      "__uuid__": "34fcab78-b195-41f7-bffb-3a60cbc072bd"
     },
     "_N$_defaultCacheMode": 0,
     "_N$debugSlots": false,
@@ -344,19 +360,25 @@
     "_id": ""
   },
   {
-    "__type__": "0bcdaYFwXFBf6mf5Peg15yf",
+    "__type__": "c671cZRt45E1LB0WD/1vHCc",
     "_name": "",
     "_objFlags": 0,
     "node": {
       "__id__": 1
     },
     "_enabled": true,
-    "dame": 3,
-    "maxHP": 10,
+    "maxHP": 30,
+    "attack": false,
+    "defense": true,
+    "support": false,
+    "Spawner": {
+      "__uuid__": "8f372b2f-11c4-4cba-85f3-b7e8cd2d881f"
+    },
+    "drawwww": null,
     "_id": ""
   },
   {
-    "__type__": "cc.CircleCollider",
+    "__type__": "cc.BoxCollider",
     "_name": "",
     "_objFlags": 0,
     "node": {
@@ -367,9 +389,30 @@
     "_offset": {
       "__type__": "cc.Vec2",
       "x": 0,
-      "y": 40
+      "y": 0
     },
-    "_radius": 160,
+    "_size": {
+      "__type__": "cc.Size",
+      "width": 110,
+      "height": 110
+    },
+    "_id": ""
+  },
+  {
+    "__type__": "cc.CircleCollider",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "tag": 0,
+    "_offset": {
+      "__type__": "cc.Vec2",
+      "x": 0,
+      "y": 0
+    },
+    "_radius": 200,
     "_id": ""
   },
   {

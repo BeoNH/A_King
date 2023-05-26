@@ -26,8 +26,7 @@ export default class AI extends cc.Component {
         AKing.Ins.checkLandscapes();
 
         //this.buildOc(AKing.Ins.orcBuild[1], `GoldMine`);
-        this.buildOc(AKing.Ins.orcBuild[2], `Warrior`);
-
+        this.buildOc(AKing.Ins.orcBuild[4], `Warrior`);
     }
 
     update(dt): void{
@@ -51,7 +50,7 @@ export default class AI extends cc.Component {
         Map.Ins.board.forEach((row, rowIndex) => {
             row.forEach((cell, colIndex) => {
                 let cellNode = cc.find(`Map/Cell ${rowIndex} ${colIndex}`, cc.Canvas.instance.node);
-                if(cell === -1){
+                if(cell === -1 && cellNode.name != `Cell ${this.castleOcX} ${this.castleOcY}`){
                     arr.push(cellNode);
                 }
             });
@@ -78,7 +77,9 @@ export default class AI extends cc.Component {
     buildOc(node: cc.Prefab, name: string): void{
         let a = cc.instantiate(node);
         a.parent = cc.Canvas.instance.node;
-        a.setSiblingIndex(4);
+        a.setSiblingIndex(6);
+        console.log(`Warrior`,a);
+
 
         if(name == `GoldMine`){
             this.changeMoney(-170 - this.luongTienTang[this.idxTangTien]);
@@ -101,7 +102,6 @@ export default class AI extends cc.Component {
         }
         
         this.hoverEffectOc(true,`building`,a.position);
-        AKing.Ins.isBuilding = true;
         this.DemNguocTimerIn(a);
     }
 
@@ -138,9 +138,7 @@ export default class AI extends cc.Component {
         ani.on(`finished`, ()=>{
             time.destroy();
             this.hoverEffectOc(false);
-            AKing.Ins.isBuilding = false;
         });
-        ani.play();
-        
+        ani.play();       
     }
 }

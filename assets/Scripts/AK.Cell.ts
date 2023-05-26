@@ -20,6 +20,8 @@ export default class Cell extends cc.Component {
     onTouchStart(event): void {
       AKing.Ins.circleTown.position = AKing.Ins.startCircle;
       AKing.Ins.circleSell.position = AKing.Ins.startCircle;
+      AKing.Ins.circleSell.children[1].active = false;
+      AKing.Ins.circleSell.children[2].active = false;
 
       
       this.node.on(cc.Node.EventType.MOUSE_MOVE,this.onMouseMove,this);
@@ -68,6 +70,12 @@ export default class Cell extends cc.Component {
         AKing.Ins.circleTown.setSiblingIndex(100);
       }
       else if(Map.Ins.board[AKing.Ins.posCellX][AKing.Ins.posCellY] == 2){
+        AKing.Ins.circleSell.children[1].active = true;
+        AKing.Ins.circleSell.position = node;
+        AKing.Ins.circleSell.setSiblingIndex(101);
+      }
+      else if(Map.Ins.board[AKing.Ins.posCellX][AKing.Ins.posCellY] == 4){
+        AKing.Ins.circleSell.children[2].active = true;
         AKing.Ins.circleSell.position = node;
         AKing.Ins.circleSell.setSiblingIndex(101);
       }
