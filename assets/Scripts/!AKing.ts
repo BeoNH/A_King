@@ -9,26 +9,26 @@ export default class AKing extends cc.Component {
     public static Ins: AKing;
    
     @property(cc.Node)
-    circleTown:cc.Node = null;
-    @property(cc.Node)
-    circleSell:cc.Node = null;
-    @property(cc.Node)
     map: cc.Node = null;
-    @property(cc.Node)
-    hoverHM: cc.Node = null;
     @property(cc.Node)
     Barrier: cc.Node = null;
     @property(cc.Prefab)
     timer: cc.Prefab = null;
     @property(cc.Prefab)
     barrierPre: cc.Prefab[] = [];
-
-
-
+    
+    
+    
     @property({ readonly: true, editorOnly: true, serializable: false })
     private HUMAN: string = "---------------- HUMAN -------------------";
     @property(cc.Node)
     castleHuman: cc.Node = null;
+    @property(cc.Node)
+    circleTown:cc.Node = null;
+    @property(cc.Node)
+    circleSell:cc.Node = null;
+    @property(cc.Node)
+    hoverHM: cc.Node = null;
     @property(cc.SpriteFrame)
     landScapesFrame: cc.SpriteFrame[] = [];
     @property(cc.Prefab)
@@ -38,6 +38,8 @@ export default class AKing extends cc.Component {
     private ORC: string = "---------------- ORC -------------------";
     @property(cc.Node)
     castleORC: cc.Node = null;
+    @property(cc.Node)
+    moneyBarTowers: cc.Node = null;
     @property(cc.SpriteFrame)
     landScapesFrameOc: cc.SpriteFrame[] = [];
     @property(cc.Prefab)
@@ -268,8 +270,7 @@ export default class AKing extends cc.Component {
 
         //xử lý bán tháp
         let b = this.circleSell.children[1].children[0].getComponent(cc.Label);
-        let c = this.castleHuman.children[2].getComponent(cc.Label);
-        c.string = `${parseInt(c.string)+parseInt(b.string)}`; 
+        this.changeMoney(parseInt(b.string));
 
         //xử lý giảm tiền mua tháp
         let down = this.circleTown.getComponentsInChildren(cc.Label);
@@ -288,7 +289,7 @@ export default class AKing extends cc.Component {
         let c = this.castleHuman.children[2].getComponent(cc.Label);
 
         if(parseInt(c.string) >= -parseInt(b.string) && !this.isBuilding){
-            c.string = `${parseInt(c.string)+parseInt(b.string)}`; 
+            this.changeMoney(parseInt(b.string)); 
             let node = cc.find(`Barrier ${this.posCellX} ${this.posCellY}`, this.Barrier);
             this.hoverEffect(true,`removingTree`, node.position);
             this.DemNguocTimerIn(node,5);
@@ -321,6 +322,7 @@ export default class AKing extends cc.Component {
         town.typeAction();
     }
 
+    //xử lý các hiệu ứng khi tương tác
     hoverEffect( status: boolean, ani?: string, pos?: cc.Vec3): void{
         this.hoverHM.active = status;
         this.hoverHM.setSiblingIndex(100);
@@ -360,7 +362,11 @@ export default class AKing extends cc.Component {
                 target.destroy();
             }
         });
-        ani.play();
-        
+        ani.play();  
+    }
+
+    changeMoney(money: number): void{
+        let gold = AKing.Ins.castleHuman.children[2].getComponent(cc.Label);
+        gold.string = `${parseInt(gold.string)+money}`;
     }
 }

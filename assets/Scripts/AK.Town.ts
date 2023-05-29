@@ -1,5 +1,7 @@
 import AKing from "./!AKing";
+import AI from "./AK.Automation";
 import Map from "./AK.Map";
+import Mod from "./AK.Mod";
 
 const {ccclass, property} = cc._decorator;
 
@@ -92,11 +94,9 @@ export default class Town extends cc.Component {
         this.unscheduleAllCallbacks();
         this.schedule(()=>{
             if(this.node.getComponent(sp.Skeleton).defaultSkin == `Red`){
-                let gold = AKing.Ins.castleORC.children[2].getComponent(cc.Label);
-                gold.string = `${parseInt(gold.string)+15}`;
+                AI.Ins.changeMoney(15);
             }else{
-                let gold = AKing.Ins.castleHuman.children[2].getComponent(cc.Label);
-                gold.string = `${parseInt(gold.string)+15}`;
+                AKing.Ins.changeMoney(15);
             }
             this.node.children[0].active = true;
             this.node.children[0].position = cc.v3(0,0);
@@ -120,6 +120,8 @@ export default class Town extends cc.Component {
     }
 
     onShot(taget: cc.Node): void{
+        if(taget == null) return;
+
         let bullet = cc.instantiate(this.Spawner);
         bullet.getComponent(sp.Skeleton).defaultSkin = this.node.getComponent(sp.Skeleton).defaultSkin;
         bullet.parent = this.node;
@@ -129,14 +131,25 @@ export default class Town extends cc.Component {
         let dir = taget.position.clone().sub(bullet.position);
         let angleShot = Math.atan2(dir.x, dir.y) * 180 / Math.PI;
 
-        cc.tween(bullet)
+        let shot = cc.tween(bullet)
         .to(0, { angle: angleShot })
+        .delay(1)
         .to(0.2, { position: pos})
         .call(()=>{
             bullet.getComponent(sp.Skeleton).animation = `hit`;
             bullet.getComponent(sp.Skeleton).setCompleteListener((enetry: sp.spine.TrackEntry) => {
                 if(enetry.animation.name === `hit`){
+                    taget.getChildByName("hpBar").active = true;
+                    let hp = taget.getChildByName("hpBar").getChildByName("hp");
+                    let max = taget.getComponent(Mod).maxHP;
+                    taget.getComponent(Mod).HP -= 5;
+                    let hpMod = taget.getComponent(Mod).HP;
+                    hp.getComponent(cc.Sprite).fillRange = hpMod/max;
+
                     bullet.destroy();
+                    if(hpMod>0 && taget){
+                        this.onShot(taget);
+                    }
                 }
             })
         })        
@@ -150,6 +163,12 @@ export default class Town extends cc.Component {
             AKing.Ins.checkLandscapes();
             AKing.Ins.hoverEffect(true,`destroy`,this.node.position);
             this.node.destroy();
+
+            if(this.node.getComponent(sp.Skeleton).defaultSkin == `Blue`){
+				AI.Ins.changeMoney(10);
+			}else{
+				AKing.Ins.changeMoney(10);
+			}
         } 
     }
 }

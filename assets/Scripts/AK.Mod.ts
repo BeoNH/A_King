@@ -2,6 +2,7 @@ import AKing from "./!AKing";
 import Cell from "./AK.Cell";
 import Map from "./AK.Map";
 import Town from "./AK.Town";
+import AI from "./AK.Automation";
 
 const { ccclass, property } = cc._decorator;
 
@@ -26,6 +27,9 @@ export default class Mod extends cc.Component {
 		this.HP = this.maxHP;
 
 		this.move();
+	}
+	protected update(dt: number): void {
+		this.onDestroy();
 	}
 
 	public move(): void{
@@ -112,6 +116,19 @@ export default class Mod extends cc.Component {
 			taget.getComponent(Mod).HP -= this.dame;
 			let hpMod = taget.getComponent(Mod).HP;
 			hp.getComponent(cc.Sprite).fillRange = hpMod/max;			
+		}
+	}
+
+	protected onDestroy(): void {
+		if(this.HP<=0){
+			this.node.stopAllActions();
+			this.node.getComponent(sp.Skeleton).animation = `death`;
+			this.node.destroy();
+			if(this.node.getComponent(sp.Skeleton).defaultSkin == `Blue`){
+				AI.Ins.changeMoney(5);
+			}else{
+				AKing.Ins.changeMoney(5);
+			}
 		}
 	}
 }

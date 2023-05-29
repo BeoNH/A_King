@@ -1,5 +1,6 @@
 import AKing from "./!AKing";
 import Map from "./AK.Map";
+import Town from "./AK.Town";
 
 const {ccclass, property} = cc._decorator;
 
@@ -9,6 +10,8 @@ export default class AI extends cc.Component {
 
     @property(cc.Node)
     hoverOC: cc.Node = null;
+
+    private isBuildOc: boolean = false;
 
     private castleOcX: number;
     private castleOcY: number;
@@ -25,12 +28,13 @@ export default class AI extends cc.Component {
         this.randomBaseOc();
         AKing.Ins.checkLandscapes();
 
-        //this.buildOc(AKing.Ins.orcBuild[1], `GoldMine`);
-        this.buildOc(AKing.Ins.orcBuild[4], `Warrior`);
+        this.buildOc(AKing.Ins.orcBuild[1], `GoldMine`);
     }
 
     update(dt): void{
         Map.Ins.board[this.castleOcX][this.castleOcY] = -3;
+        this.buildOc(AKing.Ins.orcBuild[2], `Warrior`);
+
     }
 
 
@@ -62,7 +66,6 @@ export default class AI extends cc.Component {
         let name = nodePos.name.split(" ");
         node.position = cc.v3(nodePos.position.x+35, nodePos.position.y+35);
         node.name = `Town ${name[1]} ${name[2]}`;
-        console.log(arr);
 
         AKing.Ins.changeLands(parseInt(name[1]),parseInt(name[2]),-1);
         Map.Ins.board[parseInt(name[1])][parseInt(name[2])] = -2;
@@ -75,16 +78,20 @@ export default class AI extends cc.Component {
     }
 
     buildOc(node: cc.Prefab, name: string): void{
+        if(this.isBuildOc == true) return;
+        
+        let money = cc.find(`${name}/lnCoin`, AKing.Ins.moneyBarTowers).getComponent(cc.Label).string;
+        let cost = - parseInt(money) - this.luongTienTang[this.idxTangTien];
+        let caslte = AKing.Ins.castleORC.children[2].getComponent(cc.Label).string;
+        if(parseInt(caslte) < -cost) return;
+        this.idxTangTien++;
+        
+        this.isBuildOc = true;
         let a = cc.instantiate(node);
         a.parent = cc.Canvas.instance.node;
         a.setSiblingIndex(6);
-        console.log(`Warrior`,a);
-
 
         if(name == `GoldMine`){
-            this.changeMoney(-170 - this.luongTienTang[this.idxTangTien]);
-            this.idxTangTien++;
-
             let rand = ~~(Math.random()*3-1);
             let b = cc.find(`Map/Cell ${this.castleOcX+1} ${this.castleOcY+rand}`, cc.Canvas.instance.node);
             a.position = cc.v3(b.position.x + 35, b.position.y+35);
@@ -96,11 +103,21 @@ export default class AI extends cc.Component {
         }
         else if(name == `Warrior`)
         {
-            this.changeMoney(-200 - this.luongTienTang[this.idxTangTien]);
-            this.idxTangTien++;
+            this.getRandomTownPos(a);
+            let warrior = a.getComponent(Town);
+            let name = a.name.split(" ");
+            let des = [parseInt(name[1]), parseInt(name[2])];
+            aStarSearch(Map.Ins.board, des, [AKing.Ins.castleHMX, AKing.Ins.castleHMY]);
+            warrior.arrayPosMove = getPath();
+        }
+        else if(name == `Hunter`){
+            this.getRandomTownPos(a);
+        }
+        else if(name == `Tower`){
             this.getRandomTownPos(a);
         }
         
+        this.changeMoney(cost);
         this.hoverEffectOc(true,`building`,a.position);
         this.DemNguocTimerIn(a);
     }
@@ -137,6 +154,7 @@ export default class AI extends cc.Component {
         time.getComponent(cc.Animation).getAnimationState(`timer`).duration = 8;
         ani.on(`finished`, ()=>{
             time.destroy();
+            this.isBuildOc = false;
             this.hoverEffectOc(false);
         });
         ani.play();       

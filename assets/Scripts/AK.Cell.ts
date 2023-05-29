@@ -45,6 +45,7 @@ export default class Cell extends cc.Component {
       let town = aa.getComponent(Town);
 
       if (event.getButton() === cc.Event.EventMouse.BUTTON_LEFT){
+        let check = this.node.name.split(" ");
           if(town.arrayPosMove.includes(this.node)){
             let index = town.arrayPosMove.indexOf(this.node);
             town.arrayPosMove.splice(index + 1);
