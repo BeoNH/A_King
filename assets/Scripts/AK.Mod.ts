@@ -17,19 +17,21 @@ export default class Mod extends cc.Component {
     maxHP: number = 0;
 
 	public HP: number = 0;
-
 	private count: number = 1;
-	private isAttack: boolean = false;
+
+	private arrAttack: cc.Node[] = [];
+	private nodeAttack: cc.Node;
 
 	protected onLoad(): void {
 		Mod.Ins =  this;
 
 		this.HP = this.maxHP;
+		this.arrAttack = [];
 
 		this.move();
 	}
 	protected update(dt: number): void {
-		this.onDestroy();
+		this.onDestroyMod();
 	}
 
 	public move(): void{
@@ -61,44 +63,55 @@ export default class Mod extends cc.Component {
 				this.move();
 			}else {
 				this.count = 1;
-				this.node.getComponent(sp.Skeleton).animation = 'idle';
 				town.arrayPosMove = [];
 			}
 		})
 		.start();
 	}
 
-	onCollisionEnter(other: cc.BoxCollider, self: cc.Collider): void{
-		if(!this.isAttack && other.tag == 1 && 
+	onCollisionEnter(other: cc.BoxCollider, self: cc.CircleCollider): void{
+		if(other.tag == 1 &&
 			other.node.getComponent(sp.Skeleton).defaultSkin !== self.node.getComponent(sp.Skeleton).defaultSkin &&
-			other.node){
-				let a = other.node.name.split(" ");
+			other.node && !this.arrAttack.includes(other.node)){
+
+				this.arrAttack.push(other.node);
+
+				this.nodeAttack = this.arrAttack[0];
+
+				let a = this.nodeAttack.name.split(" ");
 				let b = cc.find(`Map/Cell ${a[1]} ${a[2]}`, cc.Canvas.instance.node);
 				//kiểm tra thap co thuoc đường đi không nếu không ngắt va chạm
-				if(other.node.getComponent(Town)){
+				if(this.nodeAttack.getComponent(Town)){
 					if(!self.node.parent.getComponent(Town).arrayPosMove.includes(b)){
 						return;
 					}
 				}
-				this.isAttack = true;
 				this.node.pauseAllActions();
 				this.node.getComponent(sp.Skeleton).animation = `attack1`;
 				this.node.getComponent(sp.Skeleton).timeScale = 0.5;
 				//callback lại mỗi khi animation chạy xong.
 				this.node.getComponent(sp.Skeleton).setCompleteListener((entry: sp.spine.TrackEntry)=>{
-					if(entry.animation.name == "attack1" ) {
-						this.onAtack(other.node);
+					if(entry.animation.name == "attack1") {
+						this.onAtack(this.nodeAttack);
 					}
-				})
-		}
+				});
+			}
 	}
 
-	onCollisionExit(other: cc.BoxCollider, self): void{
-		if(other.tag !== 1) return;
-		this.isAttack = false;
-		this.node.getComponent(sp.Skeleton).timeScale = 1;
-		this.node.getComponent(sp.Skeleton).animation = `run`;
-		this.node.resumeAllActions();
+	onCollisionExit(other: cc.BoxCollider, self: cc.CircleCollider): void{
+		// Ngắt không gọi animation chay lien tuc
+		if(other.tag == 1 &&
+			other.node.getComponent(sp.Skeleton).defaultSkin !== self.node.getComponent(sp.Skeleton).defaultSkin)
+			{
+				console.log(this.arrAttack.length);
+				this.arrAttack.shift();
+
+				if(this.arrAttack.length == 0){
+					this.node.getComponent(sp.Skeleton).timeScale = 1;
+					this.node.getComponent(sp.Skeleton).animation = `run`;
+					this.node.resumeAllActions();
+				}
+			}
 	}
 
 	onAtack(taget: cc.Node): void{
@@ -119,7 +132,7 @@ export default class Mod extends cc.Component {
 		}
 	}
 
-	protected onDestroy(): void {
+	protected onDestroyMod(): void {
 		if(this.HP<=0){
 			this.node.stopAllActions();
 			this.node.getComponent(sp.Skeleton).animation = `death`;

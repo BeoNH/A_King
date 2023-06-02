@@ -37,21 +37,29 @@ export default class Cell extends cc.Component {
       let nameParts = this.node.name.split(" ");
       AKing.Ins.townX = parseInt(nameParts[1]);
       AKing.Ins.townY = parseInt(nameParts[2]);
+
+      let aa = cc.find(`Town ${AKing.Ins.townX} ${AKing.Ins.townY}`,cc.Canvas.instance.node);
+      if(!aa || aa.getComponent(sp.Skeleton).defaultSkin == `Red`) return;
+      let town = aa.getComponent(Town);
+      town.arrayPosMove = [];
     }
 
     onMouseMove(event): void {
       let aa = cc.find(`Town ${AKing.Ins.townX} ${AKing.Ins.townY}`,cc.Canvas.instance.node);
-      if(aa == null) return;
+      if(!aa || aa.getComponent(sp.Skeleton).defaultSkin == `Red`) return;
       let town = aa.getComponent(Town);
 
+      let node = this.node.name.split(" ");
+      let rowIndex = parseInt(node[1]);
+      let colIndex = parseInt(node[2]);
+      
       if (event.getButton() === cc.Event.EventMouse.BUTTON_LEFT){
-        let check = this.node.name.split(" ");
-          if(town.arrayPosMove.includes(this.node)){
-            let index = town.arrayPosMove.indexOf(this.node);
-            town.arrayPosMove.splice(index + 1);
-          }else{
-            town.arrayPosMove.push(this.node);
-          }
+        //xử lý thêm điểm vào nếu node trong mảng thì lùi lại 1 ô, nếu không thì kiểm tra khác 4 và thêm vào mảng
+        // câu điều kiện rút gọn (ternary operator);
+        town.arrayPosMove.includes(this.node) //kiểm tra có trong mảng ko
+          ? town.arrayPosMove.splice(town.arrayPosMove.indexOf(this.node) + 1) : (
+            Map.Ins.board[rowIndex][colIndex] != 4 && town.arrayPosMove.push(this.node)
+          );
       }
     }
 

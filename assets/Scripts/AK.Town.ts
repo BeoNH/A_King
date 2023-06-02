@@ -2,6 +2,7 @@ import AKing from "./!AKing";
 import AI from "./AK.Automation";
 import Map from "./AK.Map";
 import Mod from "./AK.Mod";
+import Popup from "./AK.Popup";
 
 const {ccclass, property} = cc._decorator;
 
@@ -33,7 +34,6 @@ export default class Town extends cc.Component {
         Town.Ins = this;
 
         this.HP = this.maxHP;
-        this.typeAction()
     }
 
     update(dt): void{
@@ -44,7 +44,12 @@ export default class Town extends cc.Component {
                 this.node.children[i].destroy();
             }
         }
-        this.onDestroy();        
+
+        if(Popup.Ins.node.children[0].active){
+            this.arrayPosMove = [];
+            this.node.setSiblingIndex(4)
+        }
+        this.onDestroyTown();        
     }
 
     typeAction(): void{
@@ -71,8 +76,15 @@ export default class Town extends cc.Component {
         if(line !== null){
             for (let i = 0; i < line.length-1; i++) {
                 a.lineWidth = 8;
-                a.moveTo(line[i].position.x + 25,line[i].position.y + 45);
-                a.lineTo(line[i+1].position.x+ 25,line[i+1].position.y+ 45);
+                if(this.node.getComponent(sp.Skeleton).defaultSkin == `Blue`){
+                    a.moveTo(line[i].position.x + 25,line[i].position.y + 45);
+                    a.lineTo(line[i+1].position.x+ 25,line[i+1].position.y+ 45);
+                }
+                else
+                {
+                    a.moveTo(line[i].position.x + 45,line[i].position.y + 25);
+                    a.lineTo(line[i+1].position.x+ 45,line[i+1].position.y+ 25);
+                }
             }
             a.stroke();
             this.drawwww.parent = AKing.Ins.map;
@@ -101,7 +113,7 @@ export default class Town extends cc.Component {
             this.node.children[0].active = true;
             this.node.children[0].position = cc.v3(0,0);
             cc.tween(this.node.children[0]) .to(1,{position: cc.v3(0,100)}) .call(()=>{ this.node.children[0].active = false}) .start();
-        },10)    
+        },5)    
     }
 
     onDefense(): void{}
@@ -127,14 +139,12 @@ export default class Town extends cc.Component {
         bullet.parent = this.node;
         bullet.position = cc.v3(0,100);
 
-        let pos = this.node.convertToNodeSpaceAR(taget.convertToWorldSpaceAR(cc.Vec3.ZERO));
-        let dir = taget.position.clone().sub(bullet.position);
-        let angleShot = Math.atan2(dir.x, dir.y) * 180 / Math.PI;
+        let pos = this.node.convertToNodeSpaceAR(taget.convertToWorldSpaceAR(cc.Vec2.ZERO));
 
-        let shot = cc.tween(bullet)
-        .to(0, { angle: angleShot })
-        .delay(1)
-        .to(0.2, { position: pos})
+        cc.tween(bullet) .delay(0.25) .to(0,{angle:180}) .start();
+
+        cc.tween(bullet)
+        .bezierBy(0.5, cc.v2(0,0), cc.v2(35, 300), pos)
         .call(()=>{
             bullet.getComponent(sp.Skeleton).animation = `hit`;
             bullet.getComponent(sp.Skeleton).setCompleteListener((enetry: sp.spine.TrackEntry) => {
@@ -148,27 +158,42 @@ export default class Town extends cc.Component {
 
                     bullet.destroy();
                     if(hpMod>0 && taget){
-                        this.onShot(taget);
+                        this.scheduleOnce(()=>{
+                            this.onShot(taget);
+                        },1);
                     }
                 }
             })
-        })        
+        })     
         .start();
     }
 
-    onDestroy(): void{
+    onDestroyTown(): void{
         if(this.HP <=0){
             let a = this.node.name.split(" ");
             AKing.Ins.changeLands(parseInt(a[1]),parseInt(a[2]),0);
             AKing.Ins.checkLandscapes();
             AKing.Ins.hoverEffect(true,`destroy`,this.node.position);
-            this.node.destroy();
-
-            if(this.node.getComponent(sp.Skeleton).defaultSkin == `Blue`){
-				AI.Ins.changeMoney(10);
-			}else{
-				AKing.Ins.changeMoney(10);
-			}
+            
+            if(!this.attack && !this.defense && !this.support){
+                this.node.active = false;
+                if(this.node.getComponent(sp.Skeleton).defaultSkin == `Blue`){
+                    Popup.Ins.winShow(`Orc`);
+                }
+                else{
+                    Popup.Ins.winShow(`Human`);
+                }
+            }
+            else{
+                this.node.destroy();
+                this.drawwww?.destroy();
+                if(this.node.getComponent(sp.Skeleton).defaultSkin == `Blue`){
+                    AI.Ins.changeMoney(10);
+                }
+                else{
+                    AKing.Ins.changeMoney(10);
+                }
+            }
         } 
     }
 }

@@ -33,7 +33,7 @@ function isValid(row, col)
 // blocked or not
 function isUnBlocked(grid, row, col)
 {
-	let nope = [0,1,-1,2,-2,3,-3]
+	let nope = [0,1,-1,2,-2,3]
 	// Returns true if the cell is not blocked else false
 	if (nope.includes(grid[row][col]))
 		return (true);

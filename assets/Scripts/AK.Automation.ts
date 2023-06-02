@@ -34,7 +34,6 @@ export default class AI extends cc.Component {
     update(dt): void{
         Map.Ins.board[this.castleOcX][this.castleOcY] = -3;
         this.buildOc(AKing.Ins.orcBuild[2], `Warrior`);
-
     }
 
 
@@ -91,35 +90,40 @@ export default class AI extends cc.Component {
         a.parent = cc.Canvas.instance.node;
         a.setSiblingIndex(6);
 
-        if(name == `GoldMine`){
-            let rand = ~~(Math.random()*3-1);
-            let b = cc.find(`Map/Cell ${this.castleOcX+1} ${this.castleOcY+rand}`, cc.Canvas.instance.node);
-            a.position = cc.v3(b.position.x + 35, b.position.y+35);
-            a.name = `Town ${this.castleOcX+1} ${this.castleOcY+rand}`;
-
-            AKing.Ins.changeLands(this.castleOcX+1,this.castleOcY +rand,-1);
-            Map.Ins.board[this.castleOcX+1][this.castleOcY+ rand] = -2;
-            AKing.Ins.checkLandscapes();
+        if(name == `GoldMine` || name == `Tower`){
+            this.getRandomTownPos(a);
         }
-        else if(name == `Warrior`)
+        else if(name == `Warrior` || name == `Hunter`)
         {
             this.getRandomTownPos(a);
-            let warrior = a.getComponent(Town);
-            let name = a.name.split(" ");
-            let des = [parseInt(name[1]), parseInt(name[2])];
-            aStarSearch(Map.Ins.board, des, [AKing.Ins.castleHMX, AKing.Ins.castleHMY]);
-            warrior.arrayPosMove = getPath();
-        }
-        else if(name == `Hunter`){
-            this.getRandomTownPos(a);
-        }
-        else if(name == `Tower`){
-            this.getRandomTownPos(a);
+
+            //Tự tìm đường đến điểm chỉ định.
+            this.getWayPosMove(a, AKing.Ins.castleHuman);
         }
         
         this.changeMoney(cost);
         this.hoverEffectOc(true,`building`,a.position);
         this.DemNguocTimerIn(a);
+    }
+
+    getWayPosMove(startPos: cc.Node , endPos: cc.Node): void{
+        let attack = startPos.getComponent(Town);
+        let nameS = startPos.name.split(" ");
+        let start = [parseInt(nameS[1]), parseInt(nameS[2])];
+
+        let nameE = endPos.name.split(" ");
+        let end = [parseInt(nameE[1]), parseInt(nameE[2])];
+
+        aStarSearch(Map.Ins.board, start, end);
+
+        let b = getPath();
+        while (b.length > 0) {
+            let pos = b[0];
+            b.shift();
+            let c = cc.find(`Map/Cell ${pos[0]} ${pos[1]}`, cc.Canvas.instance.node);
+
+            attack.arrayPosMove.push(c);
+        }
     }
 
     hoverEffectOc( status: boolean, ani?: string, pos?: cc.Vec3): void{
@@ -156,6 +160,7 @@ export default class AI extends cc.Component {
             time.destroy();
             this.isBuildOc = false;
             this.hoverEffectOc(false);
+            target.getComponent(Town).typeAction();
         });
         ani.play();       
     }

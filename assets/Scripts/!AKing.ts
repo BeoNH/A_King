@@ -65,6 +65,9 @@ export default class AKing extends cc.Component {
 
     onLoad () {
         AKing.Ins = this;
+
+        this.circleTown.active = true;
+        this.circleSell.active = true;
     }
 
     start () {
@@ -129,12 +132,13 @@ export default class AKing extends cc.Component {
         let c = cc.find(`Map/Cell ${this.castleHMX} ${this.castleHMY}`, this.node);
         this.castleHuman.name = `Town ${this.castleHMX} ${this.castleHMY}`;
         this.castleHuman.position = cc.v3(c.position.x +35, c.position.y +35);
+        this.castleHuman.setSiblingIndex(10);
 
         this.changeLands(this.castleHMX, this.castleHMY, 1);
     }
 
     randomBarrier(): void{  
-        for (let i = 0; i < 13; i++) {
+        for (let i = 0; i < 16; i++) {
             let randRow,randCol,randBr;
             do {
                 randRow = ~~(Math.random()*Map.Ins.row);
@@ -226,6 +230,10 @@ export default class AKing extends cc.Component {
         this.BuildTown(this.humanBuild[3],`Archer`);
     }
 
+    onTower(): void{
+        this.BuildTown(this.humanBuild[4],`Tower`);
+    }
+
     BuildTown(node: cc.Prefab, name: string): void{
         this.circleTown.position = this.startCircle;
         if(this.isBuilding) return;
@@ -300,7 +308,7 @@ export default class AKing extends cc.Component {
 
     checkIsTown(): void{
         let aa = this.node.getChildByName(`Town ${this.townX} ${this.townY}`);        
-        if(!aa) return;
+        if(!aa || aa.getComponent(sp.Skeleton).defaultSkin == `Red`) return;
         let town = aa.getComponent(Town);
         if(!town) return;
         if(town.arrayPosMove.length <= 0) return;
@@ -360,6 +368,9 @@ export default class AKing extends cc.Component {
             this.isBuilding = false;
             if(target.parent === this.Barrier){
                 target.destroy();
+            }
+            if(target.getComponent(Town).support){
+                target.getComponent(Town).typeAction();
             }
         });
         ani.play();  

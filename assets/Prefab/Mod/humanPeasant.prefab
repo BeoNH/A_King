@@ -31,10 +31,13 @@
       },
       {
         "__id__": 10
+      },
+      {
+        "__id__": 11
       }
     ],
     "_prefab": {
-      "__id__": 11
+      "__id__": 12
     },
     "_opacity": 255,
     "_color": {
@@ -316,7 +319,7 @@
     ],
     "paused": false,
     "defaultSkin": "Blue",
-    "defaultAnimation": "idle",
+    "defaultAnimation": "run",
     "_preCacheMode": 0,
     "_cacheMode": 0,
     "loop": true,
@@ -327,7 +330,7 @@
     "_frameCache": null,
     "_curFrame": null,
     "_skeletonCache": null,
-    "_animationName": "idle",
+    "_animationName": "run",
     "_animationQueue": [],
     "_headAniInfo": null,
     "_playTimes": 0,
@@ -351,7 +354,7 @@
       "__id__": 1
     },
     "_enabled": true,
-    "tag": 1,
+    "tag": 0,
     "_offset": {
       "__type__": "cc.Vec2",
       "x": 0,
@@ -370,6 +373,27 @@
     "_enabled": true,
     "dame": 2,
     "maxHP": 15,
+    "_id": ""
+  },
+  {
+    "__type__": "cc.BoxCollider",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "tag": 1,
+    "_offset": {
+      "__type__": "cc.Vec2",
+      "x": 0,
+      "y": 50
+    },
+    "_size": {
+      "__type__": "cc.Size",
+      "width": 60,
+      "height": 100
+    },
     "_id": ""
   },
   {
