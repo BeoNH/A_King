@@ -782,6 +782,9 @@
       "__id__": 2
     },
     "_enabled": true,
+    "music": {
+      "__uuid__": "c34c7750-0fa4-4859-8c67-63c76c153308"
+    },
     "_id": "8d3I+GvY5Bvb6nApYBoycg"
   }
 ]

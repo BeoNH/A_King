@@ -1,5 +1,6 @@
 import AI from "./AK.Automation";
 import Map from "./AK.Map";
+import Sounds from "./AK.Sound";
 import Town from "./AK.Town";
 
 const {ccclass, property} = cc._decorator;
@@ -264,6 +265,8 @@ export default class AKing extends cc.Component {
         this.changeLands(this.posCellX, this.posCellY, 1);
         this.checkLandscapes();
         Map.Ins.board[this.posCellX][this.posCellY] = 2;
+
+        Sounds.Ins.effect(`build`);
     }
 
     onSell(): void{
@@ -274,6 +277,7 @@ export default class AKing extends cc.Component {
         node.getComponent(Town).drawwww?.destroy();
         node?.destroy();
         this.hoverEffect(true,`destroy`,node.position);
+        Sounds.Ins.effect(`destroyTown`);
 
 
         //xử lý bán tháp
@@ -300,7 +304,8 @@ export default class AKing extends cc.Component {
             this.changeMoney(parseInt(b.string)); 
             let node = cc.find(`Barrier ${this.posCellX} ${this.posCellY}`, this.Barrier);
             this.hoverEffect(true,`removingTree`, node.position);
-            this.DemNguocTimerIn(node,5);
+            this.DemNguocTimerIn(node,2.5);
+            Sounds.Ins.effect(`destroyBarrier`);
             Map.Ins.board[this.posCellX][this.posCellY] = 0;
             this.checkLandscapes();
         }   
@@ -366,10 +371,11 @@ export default class AKing extends cc.Component {
             time.destroy();
             this.hoverEffect(false);
             this.isBuilding = false;
+            Sounds.Ins.effect(`stop`);
             if(target.parent === this.Barrier){
                 target.destroy();
             }
-            if(target.getComponent(Town).support){
+            else if(target.getComponent(Town).support){
                 target.getComponent(Town).typeAction();
             }
         });

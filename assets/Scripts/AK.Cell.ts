@@ -1,6 +1,7 @@
 import AKing from "./!AKing";
 import Map from "./AK.Map";
 import Mod from "./AK.Mod";
+import Sounds from "./AK.Sound";
 import Town from "./AK.Town";
 
 const {ccclass, property} = cc._decorator;
@@ -89,6 +90,8 @@ export default class Cell extends cc.Component {
         AKing.Ins.circleSell.setSiblingIndex(101);
       }
       console.log(Map.Ins.board[AKing.Ins.posCellX][AKing.Ins.posCellY]);
+
+      Sounds.Ins.effect(`click`);
     }
 
 }

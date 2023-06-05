@@ -1,4 +1,5 @@
 import AKing from "./!AKing";
+import Sounds from "./AK.Sound";
 
 const {ccclass, property} = cc._decorator;
 
@@ -57,6 +58,8 @@ export default class Popup extends cc.Component {
         }
         cc.tween(this.flagHuman) .to(1, {height: 688}).start();
         cc.tween(this.flagOrc) .to(1, {height: 688}).start();
+
+        Sounds.Ins.effect(`done`);
     }
 
     imgName(name: string) {

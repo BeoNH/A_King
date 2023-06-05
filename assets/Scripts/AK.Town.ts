@@ -3,6 +3,7 @@ import AI from "./AK.Automation";
 import Map from "./AK.Map";
 import Mod from "./AK.Mod";
 import Popup from "./AK.Popup";
+import Sounds from "./AK.Sound";
 
 const {ccclass, property} = cc._decorator;
 
@@ -105,13 +106,15 @@ export default class Town extends cc.Component {
     onMakeGold(): void{
         this.unscheduleAllCallbacks();
         this.schedule(()=>{
+            let money = 23; //tien duoc tang them
             if(this.node.getComponent(sp.Skeleton).defaultSkin == `Red`){
-                AI.Ins.changeMoney(15);
+                AI.Ins.changeMoney(money);
             }else{
-                AKing.Ins.changeMoney(15);
+                AKing.Ins.changeMoney(money);
             }
             this.node.children[0].active = true;
             this.node.children[0].position = cc.v3(0,0);
+            this.node.children[0].getComponent(cc.Label).string = `${money}`;
             cc.tween(this.node.children[0]) .to(1,{position: cc.v3(0,100)}) .call(()=>{ this.node.children[0].active = false}) .start();
         },5)    
     }
@@ -194,6 +197,8 @@ export default class Town extends cc.Component {
                     AKing.Ins.changeMoney(10);
                 }
             }
+
+            Sounds.Ins.effect(`destroyTown`);
         } 
     }
 }
