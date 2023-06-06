@@ -11,6 +11,7 @@ export default class Menu extends cc.Component {
     }
 
     onPlay(): void{
+        cc.audioEngine.stopMusic();
         cc.director.loadScene(`Main`);
     }
 }

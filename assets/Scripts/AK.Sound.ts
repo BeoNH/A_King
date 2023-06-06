@@ -34,7 +34,7 @@ export default class Sounds extends cc.Component {
         this.barSound.position.x = -850;
         this.effectOn = true;
 
-        cc.audioEngine.playMusic(this.music,true);
+        // cc.audioEngine.playMusic(this.music,true);
 
         this.toggleMusic.node.on(`toggle`,()=>{
             if(this.toggleMusic.isChecked){

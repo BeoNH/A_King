@@ -139,6 +139,7 @@ export default class AI extends cc.Component {
 
         if(ani === `destroy`){
             this.hoverOC.getComponent(sp.Skeleton).loop = false;
+            this.idxTangTien--;
             this.scheduleOnce(()=>{
                 this.hoverEffectOc(false);
                 this.hoverOC.getComponent(sp.Skeleton).loop = true;

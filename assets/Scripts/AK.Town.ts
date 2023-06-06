@@ -121,16 +121,18 @@ export default class Town extends cc.Component {
 
     onDefense(): void{}
 
-    onCollisionEnter(other: cc.Collider, self: cc.CircleCollider): void{
+    onCollisionStay(other: cc.BoxCollider, self: cc.CircleCollider): void{
         if(!this.isAttackTown && this.defense && other.tag == 1 &&
-        other.node.getComponent(sp.Skeleton).defaultSkin !== self.node.getComponent(sp.Skeleton).defaultSkin)
+        other.node.getComponent(sp.Skeleton).defaultSkin !== self.node.getComponent(sp.Skeleton).defaultSkin &&
+        !AKing.Ins.isBuilding)
         {
-            this.isAttackTown =  true;
+            this.isAttackTown = true;
             this.onShot(other.node);
         }
     }
-    onCollisionExit(other: cc.Collider, self: cc.CircleCollider): void{
-        if(other.node.getComponent(cc.Collider).tag !== 1) return;
+    onCollisionExit(other: cc.BoxCollider, self: cc.CircleCollider): void{
+        // if(other.node.getComponent(cc.Collider).tag !== 1) return;
+        console.log(other.name);
         this.isAttackTown = false;
     }
 
@@ -176,7 +178,6 @@ export default class Town extends cc.Component {
             let a = this.node.name.split(" ");
             AKing.Ins.changeLands(parseInt(a[1]),parseInt(a[2]),0);
             AKing.Ins.checkLandscapes();
-            AKing.Ins.hoverEffect(true,`destroy`,this.node.position);
             
             if(!this.attack && !this.defense && !this.support){
                 this.node.active = false;
@@ -191,9 +192,11 @@ export default class Town extends cc.Component {
                 this.node.destroy();
                 this.drawwww?.destroy();
                 if(this.node.getComponent(sp.Skeleton).defaultSkin == `Blue`){
+                    AKing.Ins.hoverEffect(true,`destroy`,this.node.position);
                     AI.Ins.changeMoney(10);
                 }
                 else{
+                    AI.Ins.hoverEffectOc(true,`destroy`,this.node.position);
                     AKing.Ins.changeMoney(10);
                 }
             }
