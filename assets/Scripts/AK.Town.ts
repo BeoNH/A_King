@@ -28,8 +28,9 @@ export default class Town extends cc.Component {
 
     public arrayPosMove: cc.Node[] = [];
     public HP: number = 0;
+    public myMoney: number = 23;
 
-    private isAttackTown: boolean = false;
+    private isAttackTown: boolean = true;
     
     onLoad(): void{
         Town.Ins = this;
@@ -48,9 +49,10 @@ export default class Town extends cc.Component {
 
         if(Popup.Ins.node.children[0].active){
             this.arrayPosMove = [];
+            this.myMoney = 0;
             this.node.setSiblingIndex(4)
         }
-        this.onDestroyTown();        
+        this.onDestroyTown();  
     }
 
     typeAction(): void{
@@ -58,9 +60,9 @@ export default class Town extends cc.Component {
             case this.attack:
                 this.onModSpawn();
                 break;
-            // case this.defense:
-            //     this.onDefense();
-            //     break;
+            case this.defense:
+                this.isAttackTown = false;
+                break;
             case this.support:
                 this.onMakeGold();
                 break;
@@ -99,14 +101,14 @@ export default class Town extends cc.Component {
             a.parent = this.node;
             this.scheduleOnce(()=>{
                 this.onModSpawn();
-            },15)
+            },14)
         }
     }
 
     onMakeGold(): void{
         this.unscheduleAllCallbacks();
         this.schedule(()=>{
-            let money = 23; //tien duoc tang them
+            let money = this.myMoney; //tien duoc tang them
             if(this.node.getComponent(sp.Skeleton).defaultSkin == `Red`){
                 AI.Ins.changeMoney(money);
             }else{
@@ -119,21 +121,23 @@ export default class Town extends cc.Component {
         },5)    
     }
 
-    onDefense(): void{}
-
     onCollisionStay(other: cc.BoxCollider, self: cc.CircleCollider): void{
         if(!this.isAttackTown && this.defense && other.tag == 1 &&
-        other.node.getComponent(sp.Skeleton).defaultSkin !== self.node.getComponent(sp.Skeleton).defaultSkin &&
-        !AKing.Ins.isBuilding)
+        other.node.getComponent(sp.Skeleton).defaultSkin !== self.node.getComponent(sp.Skeleton).defaultSkin)
         {
             this.isAttackTown = true;
-            this.onShot(other.node);
+
+            this.schedule(()=>{
+                this.onShot(other.node);
+            },2)
         }
     }
     onCollisionExit(other: cc.BoxCollider, self: cc.CircleCollider): void{
         // if(other.node.getComponent(cc.Collider).tag !== 1) return;
-        console.log(other.name);
-        this.isAttackTown = false;
+        if(this.defense && other.node.getComponent(Mod)){
+            this.unscheduleAllCallbacks();
+            this.isAttackTown = false;
+        }
     }
 
     onShot(taget: cc.Node): void{
@@ -144,7 +148,7 @@ export default class Town extends cc.Component {
         bullet.parent = this.node;
         bullet.position = cc.v3(0,100);
 
-        let pos = this.node.convertToNodeSpaceAR(taget.convertToWorldSpaceAR(cc.Vec2.ZERO));
+        let pos = this.node.convertToNodeSpaceAR(taget?.convertToWorldSpaceAR(cc.Vec2.ZERO));
 
         cc.tween(bullet) .delay(0.25) .to(0,{angle:180}) .start();
 
@@ -154,20 +158,16 @@ export default class Town extends cc.Component {
             bullet.getComponent(sp.Skeleton).animation = `hit`;
             bullet.getComponent(sp.Skeleton).setCompleteListener((enetry: sp.spine.TrackEntry) => {
                 if(enetry.animation.name === `hit`){
+                    if(!taget) return;
+                    console.log(taget);
                     taget.getChildByName("hpBar").active = true;
                     let hp = taget.getChildByName("hpBar").getChildByName("hp");
                     let max = taget.getComponent(Mod).maxHP;
-                    taget.getComponent(Mod).HP -= 5;
+                    taget.getComponent(Mod).HP -= 4;
                     let hpMod = taget.getComponent(Mod).HP;
                     hp.getComponent(cc.Sprite).fillRange = hpMod/max;
-
-                    bullet.destroy();
-                    if(hpMod>0 && taget){
-                        this.scheduleOnce(()=>{
-                            this.onShot(taget);
-                        },1);
-                    }
                 }
+                bullet.destroy();
             })
         })     
         .start();
@@ -178,6 +178,12 @@ export default class Town extends cc.Component {
             let a = this.node.name.split(" ");
             AKing.Ins.changeLands(parseInt(a[1]),parseInt(a[2]),0);
             AKing.Ins.checkLandscapes();
+
+            //xử lý giảm tiền mua tháp
+            let down = AKing.Ins.circleTown.getComponentsInChildren(cc.Label);
+            for (let i = 0; i < down.length; i++) {
+                down[i].string =  `${parseInt(down[i].string)-120}`;
+            }
             
             if(!this.attack && !this.defense && !this.support){
                 this.node.active = false;

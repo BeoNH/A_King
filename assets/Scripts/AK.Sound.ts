@@ -28,13 +28,14 @@ export default class Sounds extends cc.Component {
 
     onLoad(): void{
         Sounds.Ins = this;
+
+        // cc.audioEngine.playMusic(this.music,true);
     }
 
     protected start(): void {
         this.barSound.position.x = -850;
         this.effectOn = true;
 
-        // cc.audioEngine.playMusic(this.music,true);
 
         this.toggleMusic.node.on(`toggle`,()=>{
             if(this.toggleMusic.isChecked){
@@ -48,9 +49,11 @@ export default class Sounds extends cc.Component {
         this.toggleSound.node.on(`toggle`, ()=>{
             if(this.toggleSound.isChecked){
                 this.effectOn = true;
+                cc.audioEngine.setEffectsVolume(1);
             }
             else{
                 this.effectOn = false;
+                cc.audioEngine.setEffectsVolume(0);
             }
         })
     }
@@ -81,16 +84,17 @@ export default class Sounds extends cc.Component {
                     cc.audioEngine.playEffect(this.soundsDestroyBarrier, false);
                     break;
                 case `done`:
-                    cc.audioEngine.stopMusic();
+                    cc.audioEngine.stopAll();
                     cc.audioEngine.playEffect(this.soundsDone, false);
-                    break;
-                case `stop`:
-                    cc.audioEngine.stopAllEffects();
                     break;
                 default:
                     break;
             }
         }
+    }
+
+    effectStop(): void{
+        cc.audioEngine.stopAllEffects();
     }
 
 }

@@ -34,13 +34,10 @@
       },
       {
         "__id__": 11
-      },
-      {
-        "__id__": 12
       }
     ],
     "_prefab": {
-      "__id__": 13
+      "__id__": 12
     },
     "_opacity": 255,
     "_color": {
@@ -308,16 +305,6 @@
     "sync": false
   },
   {
-    "__type__": "41b6eOaPjdLIoHxYQmKlfmc",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 1
-    },
-    "_enabled": true,
-    "_id": ""
-  },
-  {
     "__type__": "sp.Skeleton",
     "_name": "",
     "_objFlags": 0,
@@ -367,7 +354,7 @@
       "__id__": 1
     },
     "_enabled": true,
-    "maxHP": 30,
+    "maxHP": 45,
     "attack": false,
     "defense": true,
     "support": false,

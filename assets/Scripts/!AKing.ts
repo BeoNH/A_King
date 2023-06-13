@@ -1,5 +1,6 @@
 import AI from "./AK.Automation";
 import Map from "./AK.Map";
+import Popup from "./AK.Popup";
 import Sounds from "./AK.Sound";
 import Town from "./AK.Town";
 
@@ -15,6 +16,8 @@ export default class AKing extends cc.Component {
     Barrier: cc.Node = null;
     @property(cc.Prefab)
     timer: cc.Prefab = null;
+    @property(cc.Label)
+    countTime: cc.Label = null;
     @property(cc.Prefab)
     barrierPre: cc.Prefab[] = [];
     
@@ -60,6 +63,8 @@ export default class AKing extends cc.Component {
 
     public isBuilding: boolean = false;
 
+    private time: number = 601;
+
     private collisionManager: cc.CollisionManager;
 
     // LIFE-CYCLE CALLBACKS:
@@ -86,6 +91,21 @@ export default class AKing extends cc.Component {
 
     protected update(dt: number): void {
         Map.Ins.board[this.castleHMX][this.castleHMY] = 3;
+
+        //Đếm ngược đến hết time thfi thua
+        if(this.time>0){
+            if(this.castleHuman.active == true && this.castleORC.active == true){
+                this.time -= dt;
+    
+                const minutes = ~~(this.time / 60); // Số phút
+                const seconds = ~~(this.time % 60); // Số giây
+                
+                this.countTime.string = `0${minutes} : ${seconds.toString().padStart(2, "0")}`;        
+            }
+        }else{
+            this.castleHuman.getComponent(Town).HP = 0;
+        }
+
     }
 
     //thay doi gia tri cac o xung quanh TAM trong mang thanh gia tri z
@@ -133,13 +153,15 @@ export default class AKing extends cc.Component {
         let c = cc.find(`Map/Cell ${this.castleHMX} ${this.castleHMY}`, this.node);
         this.castleHuman.name = `Town ${this.castleHMX} ${this.castleHMY}`;
         this.castleHuman.position = cc.v3(c.position.x +35, c.position.y +35);
-        this.castleHuman.setSiblingIndex(10);
+        this.castleHuman.setSiblingIndex(80);
 
         this.changeLands(this.castleHMX, this.castleHMY, 1);
     }
 
     randomBarrier(): void{  
         for (let i = 0; i < 16; i++) {
+
+            //Kiểm tra nếu ô chọn khác 0 thì random lại ô khác.
             let randRow,randCol,randBr;
             do {
                 randRow = ~~(Math.random()*Map.Ins.row);
@@ -371,11 +393,11 @@ export default class AKing extends cc.Component {
             time.destroy();
             this.hoverEffect(false);
             this.isBuilding = false;
-            Sounds.Ins.effect(`stop`);
+            Sounds.Ins.effectStop();
             if(target.parent === this.Barrier){
                 target.destroy();
             }
-            else if(target.getComponent(Town).support){
+            else if(target.getComponent(Town).support || target.getComponent(Town).defense){
                 target.getComponent(Town).typeAction();
             }
         });

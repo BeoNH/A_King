@@ -17,7 +17,7 @@ export default class AI extends cc.Component {
     private castleOcY: number;
 
     private idxTangTien: number = 0;
-    private luongTienTang: number[] = [0,120,240,360,480];
+    private luongTienTang: number[] = [0,120,240,360,480,600,720,840,960];
 
     onLoad(): void{
         AI.Ins = this;
@@ -33,7 +33,8 @@ export default class AI extends cc.Component {
 
     update(dt): void{
         Map.Ins.board[this.castleOcX][this.castleOcY] = -3;
-        this.buildOc(AKing.Ins.orcBuild[2], `Warrior`);
+        let rand = ~~(Math.random() < 0.5 ? 2 : 3);
+        this.buildOc(AKing.Ins.orcBuild[rand], `Warrior`);
     }
 
 

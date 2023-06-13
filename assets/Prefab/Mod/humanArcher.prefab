@@ -354,8 +354,8 @@
       "__id__": 1
     },
     "_enabled": true,
-    "dame": 3,
-    "maxHP": 10,
+    "dame": 2.5,
+    "maxHP": 11,
     "_id": ""
   },
   {

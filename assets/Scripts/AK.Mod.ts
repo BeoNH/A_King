@@ -19,15 +19,12 @@ export default class Mod extends cc.Component {
 	public HP: number = 0;
 	private count: number = 1;
 
-	private arrAttack: cc.Node[] = [];
-	private nodeAttack: cc.Node;
+	private isAttack: boolean = false;
 
 	protected onLoad(): void {
 		Mod.Ins =  this;
 
 		this.HP = this.maxHP;
-		this.arrAttack = [];
-
 		this.move();
 	}
 	protected update(dt: number): void {
@@ -56,7 +53,7 @@ export default class Mod extends cc.Component {
 		//Kiểm tra quay dung huong chay
 		// Tạo tween để di chuyển node tới vị trí mới
 		cc.tween(this.node)
-		.to(1, {position: cc.v3(pps.x+60, pps.y+35)})
+		.to(1.5, {position: cc.v3(pps.x+60, pps.y+35)})
 		.call(()=>{
 			if(this.count < town.arrayPosMove.length -1 && Map.Ins.board[last[1]][last[2]] !== 0){
 				this.count++;
@@ -69,30 +66,28 @@ export default class Mod extends cc.Component {
 		.start();
 	}
 
-	onCollisionEnter(other: cc.BoxCollider, self: cc.CircleCollider): void{
-		if(other.tag == 1 &&
-			other.node.getComponent(sp.Skeleton).defaultSkin !== self.node.getComponent(sp.Skeleton).defaultSkin &&
-			other.node && !this.arrAttack.includes(other.node)){
+	onCollisionStay(other: cc.BoxCollider, self: cc.CircleCollider): void{
+		if(!this.isAttack && other.tag == 1 && other.node && 
+			other.node.getComponent(sp.Skeleton).defaultSkin !== self.node.getComponent(sp.Skeleton).defaultSkin 
+			){
 
-				this.arrAttack.push(other.node);
+				this.isAttack = true;
 
-				this.nodeAttack = this.arrAttack[0];
-
-				let a = this.nodeAttack.name.split(" ");
+				let a = other.node.name.split(" ");
 				let b = cc.find(`Map/Cell ${a[1]} ${a[2]}`, cc.Canvas.instance.node);
 				//kiểm tra thap co thuoc đường đi không nếu không ngắt va chạm
-				if(this.nodeAttack.getComponent(Town)){
+				if(other.node.getComponent(Town)){
 					if(!self.node.parent.getComponent(Town).arrayPosMove.includes(b)){
 						return;
 					}
 				}
 				this.node.pauseAllActions();
 				this.node.getComponent(sp.Skeleton).animation = `attack1`;
-				this.node.getComponent(sp.Skeleton).timeScale = 0.5;
+				this.node.getComponent(sp.Skeleton).timeScale = 0.6;
 				//callback lại mỗi khi animation chạy xong.
 				this.node.getComponent(sp.Skeleton).setCompleteListener((entry: sp.spine.TrackEntry)=>{
 					if(entry.animation.name == "attack1") {
-						this.onAtack(this.nodeAttack);
+						this.onAtack(other.node);
 					}
 				});
 			}
@@ -103,14 +98,11 @@ export default class Mod extends cc.Component {
 		if(other.tag == 1 &&
 			other.node.getComponent(sp.Skeleton).defaultSkin !== self.node.getComponent(sp.Skeleton).defaultSkin)
 			{
-				console.log(this.arrAttack.length);
-				this.arrAttack.shift();
+				this.isAttack = false;
 
-				if(this.arrAttack.length == 0){
-					this.node.getComponent(sp.Skeleton).timeScale = 1;
-					this.node.getComponent(sp.Skeleton).animation = `run`;
-					this.node.resumeAllActions();
-				}
+				this.node.getComponent(sp.Skeleton).timeScale = 1;
+				this.node.getComponent(sp.Skeleton).animation = `run`;
+				this.node.resumeAllActions();
 			}
 	}
 

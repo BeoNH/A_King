@@ -464,7 +464,7 @@
       "__id__": 1
     },
     "_enabled": true,
-    "maxHP": 40,
+    "maxHP": 42,
     "attack": false,
     "defense": false,
     "support": true,

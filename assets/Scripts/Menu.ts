@@ -4,10 +4,10 @@ const {ccclass, property} = cc._decorator;
 export default class Menu extends cc.Component {
 
     @property(cc.AudioClip)
-    music: cc.AudioClip = null;
+    musicMenu: cc.AudioClip = null;
 
-    protected onLoad(): void {
-        cc.audioEngine.playMusic(this.music,true);
+    onLoad(): void {
+        cc.audioEngine.playMusic(this.musicMenu,true);
     }
 
     onPlay(): void{
