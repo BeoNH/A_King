@@ -29,7 +29,7 @@ export default class Sounds extends cc.Component {
     onLoad(): void{
         Sounds.Ins = this;
 
-        // cc.audioEngine.playMusic(this.music,true);
+        cc.audioEngine.playMusic(this.music,true);
     }
 
     protected start(): void {
@@ -81,7 +81,7 @@ export default class Sounds extends cc.Component {
                     cc.audioEngine.playEffect(this.soundsDestroyTown, false);
                     break;
                 case `destroyBarrier`:
-                    cc.audioEngine.playEffect(this.soundsDestroyBarrier, false);
+                    cc.audioEngine.playEffect(this.soundsDestroyBarrier, true);
                     break;
                 case `done`:
                     cc.audioEngine.stopAll();

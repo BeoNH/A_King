@@ -1,10 +1,20 @@
-import AI from "./AK.Automation";
 import Map from "./AK.Map";
-import Popup from "./AK.Popup";
 import Sounds from "./AK.Sound";
 import Town from "./AK.Town";
 
 const {ccclass, property} = cc._decorator;
+
+@ccclass("AK.IconRes")
+class Locations {
+    @property()
+    id: number = 1;
+    @property(cc.SpriteFrame)
+    bgMap: cc.SpriteFrame = null;
+    @property(cc.Prefab)
+    barrierPre: cc.Prefab[] = [];
+    // @property(sp.SkeletonData)
+    // spine: sp.SkeletonData = null;
+}
 
 @ccclass
 export default class AKing extends cc.Component {
@@ -18,8 +28,8 @@ export default class AKing extends cc.Component {
     timer: cc.Prefab = null;
     @property(cc.Label)
     countTime: cc.Label = null;
-    @property(cc.Prefab)
-    barrierPre: cc.Prefab[] = [];
+    @property([Locations])
+    locations: Locations[] = [];
     
     
     
@@ -80,12 +90,12 @@ export default class AKing extends cc.Component {
 
         this.collisionManager = cc.director.getCollisionManager();
         this.collisionManager.enabled = true;
-        this.collisionManager.enabledDebugDraw = true;
+        this.collisionManager.enabledDebugDraw = false;
 
         this.startCircle = this.circleTown.position;
 
         this.randomBase();
-        this.randomBarrier();
+        this.randomMap();
         this.checkLandscapes();     
     }
 
@@ -158,7 +168,11 @@ export default class AKing extends cc.Component {
         this.changeLands(this.castleHMX, this.castleHMY, 1);
     }
 
-    randomBarrier(): void{  
+    randomMap(): void{
+        let rand = ~~(Math.random()*this.locations.length);
+        let local = this.locations.find(e => e.id == rand);
+        cc.find(`BG`,this.node).getComponent(cc.Sprite).spriteFrame = local.bgMap;
+
         for (let i = 0; i < 16; i++) {
 
             //Kiểm tra nếu ô chọn khác 0 thì random lại ô khác.
@@ -166,12 +180,12 @@ export default class AKing extends cc.Component {
             do {
                 randRow = ~~(Math.random()*Map.Ins.row);
                 randCol = ~~(Math.random()*Map.Ins.col);
-                randBr = ~~(Math.random()*this.barrierPre.length);
+                randBr = ~~(Math.random()* local.barrierPre.length);
             } while (Map.Ins.board[randRow][randCol] !== 0);
 
             let map = cc.find(`Map/Cell ${randRow} ${randCol}`,this.node);
 
-            let a = cc.instantiate(this.barrierPre[randBr]);
+            let a = cc.instantiate(local.barrierPre[randBr]);
             a.parent = this.Barrier;
             a.position = cc.v3(map.position.x+35, map.position.y+35);
             a.name = `Barrier ${randRow} ${randCol}`;
@@ -320,14 +334,19 @@ export default class AKing extends cc.Component {
         this.circleSell.position = this.startCircle;
 
         let b = this.circleSell.children[2].children[0].getComponent(cc.Label);
-        let c = this.castleHuman.children[2].getComponent(cc.Label);
 
-        if(parseInt(c.string) >= -parseInt(b.string) && !this.isBuilding){
+        if (!(Map.Ins.board[this.posCellX+1][this.posCellY] == 1 ||
+            Map.Ins.board[this.posCellX-1][this.posCellY] == 1 ||
+            Map.Ins.board[this.posCellX][this.posCellY+1] == 1 ||
+            Map.Ins.board[this.posCellX][this.posCellY-1] == 1)
+        )return;
+
+        if(/*parseInt(c.string) >= -parseInt(b.string) &&*/ !this.isBuilding){
             this.changeMoney(parseInt(b.string)); 
             let node = cc.find(`Barrier ${this.posCellX} ${this.posCellY}`, this.Barrier);
-            this.hoverEffect(true,`removingTree`, node.position);
-            this.DemNguocTimerIn(node,2.5);
             Sounds.Ins.effect(`destroyBarrier`);
+            this.hoverEffect(true,`removingTree`, node.position);
+            this.DemNguocTimerIn(node,15);
             Map.Ins.board[this.posCellX][this.posCellY] = 0;
             this.checkLandscapes();
         }   

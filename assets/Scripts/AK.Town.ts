@@ -158,8 +158,7 @@ export default class Town extends cc.Component {
             bullet.getComponent(sp.Skeleton).animation = `hit`;
             bullet.getComponent(sp.Skeleton).setCompleteListener((enetry: sp.spine.TrackEntry) => {
                 if(enetry.animation.name === `hit`){
-                    if(!taget) return;
-                    console.log(taget);
+                    if(!taget.children) return;
                     taget.getChildByName("hpBar").active = true;
                     let hp = taget.getChildByName("hpBar").getChildByName("hp");
                     let max = taget.getComponent(Mod).maxHP;
