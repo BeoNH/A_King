@@ -29,7 +29,7 @@ export default class Sounds extends cc.Component {
     onLoad(): void{
         Sounds.Ins = this;
 
-        cc.audioEngine.playMusic(this.music,true);
+        //cc.audioEngine.playMusic(this.music,true);
     }
 
     protected start(): void {

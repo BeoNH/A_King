@@ -31,9 +31,11 @@ export default class Popup extends cc.Component {
         this.flagOrc.height = 0;
     }
 
-    winShow(node: string): void{
-        AKing.Ins.circleSell.active = false;
-        AKing.Ins.circleTown.active = false;
+    winShow(node: string, check: boolean): void{
+        if(check){
+            AKing.Ins.circleSell.active = false;
+            AKing.Ins.circleTown.active = false;
+        }
         
         this.node.children[0].active = true;
         if(node == `Human`){

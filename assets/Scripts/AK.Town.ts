@@ -187,10 +187,10 @@ export default class Town extends cc.Component {
             if(!this.attack && !this.defense && !this.support){
                 this.node.active = false;
                 if(this.node.getComponent(sp.Skeleton).defaultSkin == `Blue`){
-                    Popup.Ins.winShow(`Orc`);
+                    Popup.Ins.winShow(`Orc`,true);
                 }
                 else{
-                    Popup.Ins.winShow(`Human`);
+                    Popup.Ins.winShow(`Human`,true);
                 }
             }
             else{
